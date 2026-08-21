@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>:: QUAKE III ARENA :: DEVELOPER ::</title>
+<style>
+  :root{
+    --void:#0a0908; --panel:#16130f; --panel2:#1d1915; --edge:#2f2820;
+    --bone:#b3a793; --ash:#d5c9b4; --dim:#6f6558;
+    --blood:#8a1e12; --blood2:#4d1008; --rust:#7a4d22;
+  }
+  html,body{margin:0;padding:0}
+  html{
+    background:
+      linear-gradient(180deg, rgba(10,9,8,.87) 0%, rgba(10,9,8,.94) 100%),
+      url("img/backdrop.jpg") center center / cover no-repeat fixed,
+      var(--void);
+  }
+  body{
+    padding:16px 10px 46px;
+    background:transparent;
+    background-image:
+      /* grime */
+      repeating-linear-gradient(23deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(-14deg, rgba(0,0,0,.35) 0 1px, transparent 1px 5px),
+      /* cold light from above, blood pooled below */
+      radial-gradient(ellipse at 50% -10%, #1e1a15 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 115%, #210a05 0%, transparent 60%);
+    color:var(--bone);
+    font-family:Verdana,Arial,Helvetica,sans-serif;
+    font-size:12px; line-height:1.6;
+  }
+  /* vignette over everything */
+  body:before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9;
+    background:radial-gradient(ellipse at 50% 45%, transparent 42%, rgba(0,0,0,.72) 100%);
+  }
+  .page{width:760px;margin:0 auto;position:relative;z-index:1}
+
+  /* ---- pitted iron plate ---- */
+  .plate{
+    position:relative;
+    background:var(--panel);
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.010) 0 1px, transparent 1px 9px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.30) 0 1px, transparent 1px 4px),
+      linear-gradient(180deg,#191510,#100d0a);
+    border:1px solid #000;
+    box-shadow:
+      inset 0 0 0 1px #2b241c,
+      inset 0 60px 90px rgba(0,0,0,.55),
+      0 0 40px rgba(0,0,0,.95);
+  }
+  .plate:before,.plate:after{
+    content:""; position:absolute; top:9px; width:6px; height:6px; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,#6b6157,#2a241d 62%,#0a0908);
+    box-shadow:0 1px 2px #000;
+  }
+  .plate:before{left:9px} .plate:after{right:9px}
+
+  /* ---- banner ---- */
+  .banner{
+    position:relative; text-align:center; padding:26px 12px 14px;
+    border-bottom:1px solid #000;
+    background:linear-gradient(180deg,#0e0c0a 0%,#141110 100%);
+    overflow:hidden;
+    box-shadow:inset 0 -1px 0 #2b241c;
+  }
+  .banner h1{
+    margin:0; font-family:Impact,"Arial Black",Arial,sans-serif; font-weight:normal;
+    font-size:41px; letter-spacing:4px; line-height:1;
+    background:linear-gradient(180deg,#e6dccb 0%,#9d9384 38%,#5d554a 72%,#332d26 100%);
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 2px 0 #000) drop-shadow(0 4px 10px rgba(0,0,0,.9));
+  }
+  .banner .sub{
+    margin-top:9px; color:var(--dim); font-size:9.5px; letter-spacing:4px;
+    text-transform:uppercase;
+  }
+  .banner .sub b{color:var(--blood)}
+
+
+  .inner{padding:20px 24px 8px}
+
+  /* ---- headings ---- */
+  h2{
+    font-family:"Arial Black",Arial,sans-serif; font-size:12px; letter-spacing:4px;
+    text-transform:uppercase; color:var(--ash); margin:30px 0 3px;
+    text-shadow:0 2px 0 #000;
+  }
+  h2 .mk{color:var(--blood); margin-right:6px}
+  .rule{
+    height:1px; margin:7px 0 14px;
+    background:linear-gradient(90deg,var(--blood) 0%,var(--rust) 14%,#2b241c 46%,transparent 100%);
+    box-shadow:0 1px 0 #000;
+  }
+
+  p{margin:8px 0}
+  a{color:#9a8f7d;text-decoration:underline}
+  a:visited{color:#8a7f70}
+  a:hover{color:var(--ash)}
+  .small{font-size:11px;color:var(--dim)}
+  b.hot{color:#b8452e}
+
+  code{font-family:"Courier New",Courier,monospace;font-size:12px;color:#c0a878}
+  pre{
+    font-family:"Courier New",Courier,monospace; font-size:12px;
+    background:#080706; color:#9c8f7a; border:1px solid #000;
+    box-shadow:inset 0 0 0 1px #2b241c, inset 0 0 26px rgba(0,0,0,.85);
+    padding:10px 12px; margin:10px 0; overflow-x:auto;
+  }
+
+  /* ---- steps ---- */
+  .step{
+    border:1px solid #000; background:var(--panel2); margin:14px 0;
+    box-shadow:inset 0 0 0 1px #2b241c, 0 2px 10px rgba(0,0,0,.6);
+  }
+  .step .hd{
+    background:linear-gradient(180deg,#241a14,#150f0b);
+    color:#c3b7a2; padding:8px 12px; border-bottom:1px solid #000;
+    font-family:"Arial Black",Arial,sans-serif; font-size:10.5px; letter-spacing:3px;
+    box-shadow:inset 0 1px 0 #33291f;
+  }
+  .step .hd{display:flex; align-items:center}
+  .step .hd .n{
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    width:20px; height:16px; margin-right:11px;
+    font-family:"Courier New",Courier,monospace; font-size:13px; font-weight:bold;
+    letter-spacing:0; line-height:1;
+    background:linear-gradient(180deg,var(--blood),var(--blood2));
+    color:#e8ddc9; border:1px solid #000; text-shadow:0 1px 0 #000;
+    box-shadow:inset 0 1px 0 rgba(255,120,90,.28);
+  }
+  .step .bd{padding:12px 14px}
+
+  /* ---- download ---- */
+  .dlbox{
+    border:1px solid #000; background:#0c0a08; text-align:center;
+    padding:22px 12px 16px; margin:18px 0;
+    box-shadow:inset 0 0 0 1px #33291f, inset 0 0 60px rgba(90,15,8,.30);
+  }
+  .dlbox a.dl{
+    display:inline-block; text-decoration:none; color:#e8ddc9;
+    font-family:"Arial Black",Arial,sans-serif; font-size:15px; letter-spacing:3px;
+    background:linear-gradient(180deg,#2a1c15 0%,#1a110d 50%,#241009 100%);
+    border:1px solid #000; padding:13px 30px;
+    box-shadow:
+      inset 0 0 0 1px #4a382a,
+      inset 0 1px 0 rgba(255,190,150,.14),
+      0 0 26px rgba(110,20,10,.45);
+    text-shadow:0 2px 0 #000;
+  }
+  .dlbox a.dl:hover{
+    color:#fff3e0;
+    background:linear-gradient(180deg,#3a2419 0%,#24160f 50%,#3a160c 100%);
+    box-shadow:inset 0 0 0 1px #6b4a33, 0 0 40px rgba(150,30,12,.65);
+  }
+  .dlbox .sz{color:var(--dim);font-size:9.5px;margin-top:12px;letter-spacing:3px}
+
+  /* ---- address ---- */
+  .addrbox{
+    border:1px solid #000; background:#080706; text-align:center;
+    padding:18px 12px; margin:16px 0;
+    box-shadow:inset 0 0 0 1px #33291f, inset 0 0 50px rgba(0,0,0,.9);
+  }
+  .addrbox .lbl{color:var(--dim);font-size:9.5px;letter-spacing:4px}
+  .addrbox .ip{
+    font-family:"Courier New",Courier,monospace; font-size:24px; font-weight:bold;
+    color:#d8cbb2; text-shadow:0 0 18px rgba(180,60,30,.5), 0 2px 0 #000;
+    margin-top:7px; letter-spacing:1px;
+  }
+
+
+  table.data{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+  table.data th{
+    background:linear-gradient(180deg,#241d16,#161210); color:#c3b7a2;
+    text-align:left; padding:7px 9px; border:1px solid #000;
+    font-family:"Arial Black",Arial,sans-serif; font-size:9.5px; letter-spacing:2px;
+  }
+  table.data td{
+    padding:7px 9px; border:1px solid #000; background:#171310;
+    vertical-align:top; color:#8f8577;
+  }
+  table.data tr:nth-child(even) td{background:#131110}
+  table.data td:first-child{color:var(--bone)}
+
+  .footer{
+    margin-top:26px; text-align:center; font-size:9.5px; color:#5c5245;
+    border-top:1px solid #000; padding:18px 0 20px; letter-spacing:2px;
+    background:linear-gradient(180deg,#0d0b09,#131110);
+    box-shadow:inset 0 1px 0 #2b241c;
+  }
+  .counter{
+    display:inline-block;background:#060505;border:1px solid #000;padding:4px 10px;
+    box-shadow:inset 0 0 0 1px #2b241c;
+    font-family:"Courier New",monospace;color:#8a7a62;letter-spacing:5px;font-size:13px;
+  }
+  .skull{color:var(--blood2);font-size:13px}
+
+  @media(max-width:800px){.page{width:auto}.banner h1{font-size:27px;letter-spacing:2px}}
+
+  /* ---- warning callout ---- */
+  .warn{
+    border:1px solid #000; background:#0f0a08; margin:16px 0; padding:12px 14px;
+    box-shadow:inset 0 0 0 1px #3a2419, inset 0 0 40px rgba(90,15,8,.28);
+    color:#a2937d;
+  }
+  table.data td code{font-size:11px}
+
+  /* ---- bullets: a drawn square, so nothing has to be optically centred ---- */
+  ul{list-style:none; margin:10px 0; padding:0}
+  ul li{position:relative; padding-left:24px; margin:6px 0}
+  ul li:before{
+    content:""; position:absolute; left:2px; top:.45em;
+    width:7px; height:7px;
+    background:linear-gradient(180deg,var(--blood),var(--blood2));
+    border:1px solid #000;
+    box-shadow:inset 0 1px 0 rgba(255,120,90,.30);
+  }
+
+  /* ---- banner art layers: a still poster, then the animation over it ---- */
+  .banner{position:relative; isolation:isolate}
+  .banner .poster, .banner .art{
+    position:absolute; inset:0;
+    background-position:center center; background-size:cover; background-repeat:no-repeat;
+    transform:scale(1.04);
+  }
+  .banner .poster{z-index:0; opacity:1; transition:opacity .4s ease}
+  .banner .art{z-index:1; opacity:0; transition:opacity .55s ease}
+  .banner .art.show{opacity:1}
+  .banner .veil{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 130%, rgba(120,20,10,.42) 0%, transparent 66%),
+      linear-gradient(180deg, rgba(10,9,8,.74) 0%, rgba(16,13,11,.52) 48%, rgba(10,9,8,.94) 100%);
+  }
+  .banner h1, .banner .sub{position:relative; z-index:3}
+
+  /* ---- top tabs ---- */
+  .tabs{
+    display:flex; border-bottom:1px solid #000;
+    background:linear-gradient(180deg,#0b0908,#141110);
+    box-shadow:inset 0 -1px 0 #2b241c;
+  }
+  .tabs a{
+    flex:1 1 0; text-align:center; text-decoration:none;
+    padding:11px 6px 10px;
+    font-family:"Arial Black",Arial,sans-serif; font-size:9.5px; letter-spacing:3px;
+    color:#6f6558; border-right:1px solid #000;
+    background:linear-gradient(180deg,#161210,#0e0c0a);
+    box-shadow:inset 0 1px 0 #29221a;
+    text-shadow:0 1px 0 #000;
+    transition:color .2s ease, background .25s ease, box-shadow .25s ease;
+  }
+  .tabs a:last-child{border-right:none}
+  .tabs a:hover{color:#c3b7a2; background:linear-gradient(180deg,#221a14,#140f0c)}
+  .tabs a.on{
+    color:#e6dccb;
+    background:linear-gradient(180deg,#2a1c15 0%,#1a110d 60%,#2a0f08 100%);
+    box-shadow:inset 0 1px 0 rgba(255,190,150,.14), inset 0 -3px 0 var(--blood);
+  }
+  .tabs a.on:hover{color:#fff3e0}
+
+  /* ---- secondary strip ---- */
+  .subtabs{
+    display:flex; border-bottom:1px solid #000;
+    background:linear-gradient(180deg,#100d0b,#0a0908);
+  }
+  .subtabs a{
+    flex:1 1 0; text-align:center; text-decoration:none;
+    padding:8px 6px 7px;
+    font-family:Verdana,Arial,sans-serif; font-size:9.5px; letter-spacing:2px;
+    text-transform:uppercase; color:#5f564a;
+    border-right:1px solid #000; background:#0d0b09;
+    transition:color .2s ease, background .2s ease, box-shadow .25s ease;
+  }
+  .subtabs a:last-child{border-right:none}
+  .subtabs a:hover{color:#a2937d; background:#141110}
+  .subtabs a.on{color:#c3b7a2; background:#161210; box-shadow:inset 0 -2px 0 var(--rust)}
+
+  @media(max-width:640px){
+    .tabs, .subtabs{flex-wrap:wrap}
+    .tabs a, .subtabs a{flex:1 1 50%; border-bottom:1px solid #000}
+  }
+
+  /* ---- foldable sections ---- */
+  details.fold{
+    border:1px solid #000; background:var(--panel2); margin:10px 0;
+    box-shadow:inset 0 0 0 1px #2b241c, 0 2px 10px rgba(0,0,0,.6);
+    transition:box-shadow .25s ease;
+  }
+  details.fold[open]{box-shadow:inset 0 0 0 1px #3a2f24, 0 4px 18px rgba(0,0,0,.75)}
+  details.fold>summary{
+    list-style:none; cursor:pointer; user-select:none;
+    display:flex; align-items:center;
+    background:linear-gradient(180deg,#241a14,#150f0b);
+    color:#c3b7a2; padding:9px 12px; border-bottom:1px solid transparent;
+    font-family:"Arial Black",Arial,sans-serif; font-size:10.5px; letter-spacing:3px;
+    box-shadow:inset 0 1px 0 #33291f;
+    transition:color .2s ease, background .25s ease;
+  }
+  details.fold>summary::-webkit-details-marker{display:none}
+  details.fold>summary::marker{content:""}
+  details.fold>summary:before{
+    content:"+";
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    width:20px; height:16px; margin-right:11px;
+    font-family:"Courier New",Courier,monospace; font-size:14px; font-weight:bold;
+    letter-spacing:0; line-height:1;
+    background:linear-gradient(180deg,var(--blood),var(--blood2));
+    color:#e8ddc9; border:1px solid #000; text-shadow:0 1px 0 #000;
+    box-shadow:inset 0 1px 0 rgba(255,120,90,.28);
+    transition:transform .25s ease;
+  }
+  details.fold[open]>summary:before{content:"\2212"; transform:rotate(180deg)}
+  details.fold>summary:hover{color:#e6dccb; background:linear-gradient(180deg,#2c211a,#1a1210)}
+  details.fold[open]>summary{border-bottom:1px solid #000}
+  details.fold .bd{padding:12px 14px; animation:unfold .3s ease both}
+
+  /* ---- motion ---- */
+  @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(9px)} to{opacity:1; transform:none}}
+  @keyframes unfold{from{opacity:0; transform:translateY(-5px)} to{opacity:1; transform:none}}
+
+  .plate{animation:fadeIn .45s ease both}
+  .banner h1{animation:fadeUp .55s .04s ease both}
+  .banner .sub{animation:fadeUp .55s .16s ease both}
+
+  .sec{display:none}
+  .sec.on{display:block; animation:fadeUp .32s ease both}
+
+  .step{transition:box-shadow .25s ease, transform .25s ease}
+  .step:hover{box-shadow:inset 0 0 0 1px #3a2f24, 0 4px 16px rgba(0,0,0,.75)}
+
+  a{transition:color .18s ease}
+  .dlbox a.dl{transition:color .2s ease, background .3s ease, box-shadow .3s ease}
+  table.data tr{transition:background .2s ease}
+  table.data tr:hover td{background:#1d1815}
+
+  /* scroll reveal */
+  .rv{opacity:0; transform:translateY(12px)}
+  .rv.seen{animation:fadeUp .45s ease both}
+
+  @media(prefers-reduced-motion:reduce){
+    *, *:before, *:after{animation:none !important; transition:none !important}
+    .rv{opacity:1; transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+<div class="plate">
+  <div class="banner">
+    <div class="poster" id="poster"></div>
+    <div class="art" id="art"></div>
+    <div class="veil"></div>
+    <h1>DEVELOPER</h1>
+    <div class="sub" id="bsub" style="transition:opacity .18s ease">RUNNING AND MODIFYING A QUAKE III SERVER</div>
+  </div>
+  <div class="tabs">
+    <a href="index.html">JOIN THE SERVER</a>
+    <a href="dev.html" class="on">DEVELOPER</a>
+  </div>
+  <div class="subtabs">
+    <a href="#overview" data-sec="overview" class="on">Overview</a>
+    <a href="#commands" data-sec="commands">Console &amp; Commands</a>
+    <a href="#bots" data-sec="bots">Bots</a>
+    <a href="#weapons" data-sec="weapons">Weapons</a>
+  </div>
+  <div class="inner">
+  <section class="sec on" id="overview">
+
+
+    <p>Nothing on these pages is needed to play. This is the back of the machine: how a
+    Quake 3 server is driven from the console, how its bots are built, and how Excessive
+    Plus lets you rewrite every weapon in the game from a text file.</p>
+
+    <p>It is all configuration. No compiler, no source code, no build step. Quake 3 shipped
+    in 1999 with an unusual amount of itself left in plain text, and most of that is still
+    sitting in the pk3 files waiting to be edited.</p>
+
+    <h2><span class="mk">&#9642;</span>THE SECTIONS</h2>
+    <div class="rule"></div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">&#9642;</span>CONSOLE AND COMMANDS</div>
+      <div class="bd">
+        <p>Opening a console, running a server from it, and doing the same remotely with
+        rcon. Config file syntax, command line switches, voting, demo recording, and the
+        cheat commands that only work on a local test map.</p>
+        <p><a href="#commands" data-sec="commands">Open the command reference</a></p>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">&#9642;</span>BOT CONFIGURATION</div>
+      <div class="bd">
+        <p>Every part of a bot is a text file: how it aims, whether it walks or strafe jumps,
+        what it picks up, what it says when it kills you, and what it says back when you type
+        at it. Covers the roster, the personality characteristics, both chat systems, models
+        and skins, and the caching rule that catches everybody out.</p>
+        <p><a href="#bots" data-sec="bots">Open the bot reference</a></p>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">&#9642;</span>WEAPON CONFIGURATION</div>
+      <div class="bd">
+        <p>Excessive Plus replaces Quake's hardcoded weapon numbers with an editable format,
+        and reloads it live without restarting anything. Damage separated from knockback,
+        weapons that make you slow, projectiles that chase people, and four complete example
+        modes you can paste and run.</p>
+        <p><a href="#weapons" data-sec="weapons">Open the weapon reference</a></p>
+      </div>
+    </div>
+
+    <h2><span class="mk">&#9642;</span>HOW THE PIECES FIT</h2>
+    <div class="rule"></div>
+
+    <p>Worth understanding before you change anything, because it explains why some edits
+    take effect instantly and others need a restart.</p>
+
+    <table class="data rv">
+      <tr><th width="30%">LAYER</th><th>WHAT IT IS</th></tr>
+      <tr><td>The engine</td>
+          <td>ioquake3 or similar. Networking, rendering, the file system, the console. Knows
+          nothing about weapons or rules.</td></tr>
+      <tr><td>The game module</td>
+          <td><code>qagame</code>, inside the mod's pk3. This is what Excessive Plus replaces.
+          It owns the rules, so commands like <code>addbot</code> do not exist until a map is
+          running and the module has loaded.</td></tr>
+      <tr><td>pk3 files</td>
+          <td>Renamed zip archives. Maps, models, sounds, and the bot files. The mod folder
+          is searched before <code>baseq3</code>, so a file you put there shadows the one
+          inside a pk3 without modifying it.</td></tr>
+      <tr><td>Config files</td>
+          <td>Plain text, executed as console commands. Loaded at startup or on demand.</td></tr>
+      <tr><td>Bot files</td>
+          <td>Parsed once at server start and then <b class="hot">cached</b>. This is why bot
+          edits need a full restart while weapon configs do not.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>A SENSIBLE ORDER TO WORK IN</h2>
+    <div class="rule"></div>
+
+    <p>If you are setting a server up from nothing, roughly this:</p>
+
+    <ul>
+      <li>Get a dedicated server running on a map, locally, before anything else.</li>
+      <li>Set <code>sv_allowDownload 1</code> so people who lack your maps and mod can join
+      anyway. Add <code>sv_pure 1</code> if you want custom skins and models to reach them
+      too.</li>
+      <li>Get one other person connecting from outside your network. Do this early. Port
+      forwarding and firewalls are the single most common reason a server nobody can join
+      looks perfectly healthy from the inside.</li>
+      <li>Then start changing rules. Weapon configs first, since they reload live and give
+      instant feedback.</li>
+      <li>Bots last. They are the slowest loop to iterate on, because every change means a
+      restart.</li>
+    </ul>
+
+  
+  </section>
+  <section class="sec" id="commands">
+
+
+    <p>Everything Quake 3 can do, it does through the console. The menus are a thin shell
+    over the same commands. Learn the console and you can drive a server without ever opening
+    a menu again.</p>
+
+    <h2><span class="mk">&#9642;</span>OPENING A CONSOLE</h2>
+    <div class="rule"></div>
+
+    <p><code>~</code>, the key left of <code>1</code>. On many non US keyboard layouts that
+    key does not produce a tilde and nothing happens. ioquake3 has a fix:</p>
+
+    <pre>seta cl_consoleKeys "~ ` 0x7e 0x60 F1"</pre>
+
+    <p>That cvar is a separate list from your normal binds, and it is what the engine checks
+    while the console is <b>open</b>. This matters: a plain <code>bind F1 "toggleconsole"</code>
+    will open the console and then be unable to close it, because once the console has focus
+    your binds are not being read at all. Put the key in <code>cl_consoleKeys</code> and it
+    works both ways.</p>
+
+    <p>A dedicated server has no window to press keys in. It reads typed commands directly,
+    with no leading slash and no console to open.</p>
+
+    <h2><span class="mk">&#9642;</span>RCON, DRIVING A SERVER REMOTELY</h2>
+    <div class="rule"></div>
+
+    <p>rcon sends a console command to a server you are connected to. Set a password on the
+    server:</p>
+    <pre>seta rconpassword "something long"</pre>
+
+    <p>Then from your client, once connected, tell it the same password and prefix commands
+    with <code>rcon</code>:</p>
+    <pre>/rconpassword something long
+/rcon status
+/rcon map q3dm6</pre>
+
+    <div class="warn"><b class="hot">RCON IS PLAINTEXT.</b> Quake 3 sends the password over
+    UDP unencrypted, and anyone can fire guesses at the port. A short or dictionary password
+    is found in seconds, and whoever finds it can run any server command. Use a long random
+    one, and never reuse it anywhere else.</div>
+
+    <h2><span class="mk">&#9642;</span>RUNNING THE SERVER</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="34%">COMMAND</th><th>WHAT IT DOES</th></tr>
+      <tr><td>map &lt;name&gt;</td><td>Load a map. Ends the current game.</td></tr>
+      <tr><td>devmap &lt;name&gt;</td><td>Same, but with cheats enabled. Local testing
+      only.</td></tr>
+      <tr><td>map_restart</td><td>Restart the current map without reloading it. Keeps
+      everyone connected.</td></tr>
+      <tr><td>status</td><td>Connected players with their client numbers, ping and address.
+      The number is what most other commands want.</td></tr>
+      <tr><td>serverinfo<br>systeminfo</td><td>Cvars the server is advertising.</td></tr>
+      <tr><td>dumpuser &lt;name&gt;</td><td>One player's settings, as their client reports
+      them.</td></tr>
+      <tr><td>kick &lt;name&gt;</td><td>Remove a player by name.</td></tr>
+      <tr><td>clientkick &lt;num&gt;</td><td>By client number. Safer, since names can contain
+      colour codes and spaces.</td></tr>
+      <tr><td>kick all<br>kick allbots</td><td>Everyone, or every bot.</td></tr>
+      <tr><td>addbot &lt;name&gt; &lt;skill&gt;<br>&lt;team&gt; &lt;delay&gt;</td>
+          <td>Add one bot. Skill 1 to 5, delay in milliseconds.
+          <b class="hot">Only works once a map is running</b>, because it belongs to the game
+          module rather than the engine.</td></tr>
+      <tr><td>say &lt;text&gt;<br>tell &lt;num&gt; &lt;text&gt;</td><td>Chat as the server, or
+      to one player.</td></tr>
+      <tr><td>cp &lt;text&gt;</td><td>Print in the centre of everyone's screen.</td></tr>
+      <tr><td>quit</td><td>Shut the server down.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>EXCESSIVE PLUS EXTRAS</h2>
+    <div class="rule"></div>
+
+    <p>Commands the mod adds on top. Most work as <code>/rcon</code> commands, as referee
+    commands, or as votes, depending on how the server is configured.</p>
+
+    <table class="data rv">
+      <tr><th width="34%">COMMAND</th><th>WHAT IT DOES</th></tr>
+      <tr><td>load &lt;config&gt;</td><td>Swap the entire gameplay config live, mid match. No
+      restart, no map change. The single most useful command the mod adds.</td></tr>
+      <tr><td>ref</td><td>Log in as referee, so you can run match commands without full rcon
+      access.</td></tr>
+      <tr><td>lock / unlock</td><td>Stop teams being joined, or allow it again.</td></tr>
+      <tr><td>pause<br>timeout / timein</td><td>Freeze and resume the match.</td></tr>
+      <tr><td>mute / unmute</td><td>Silence one player's chat.</td></tr>
+      <tr><td>ban &lt;id or name&gt;</td><td>Ban, with an optional reason.</td></tr>
+      <tr><td>forcejoin<br>forceteam</td><td>Move players between teams. Accepts wildcards,
+      plus <code>all</code> and <code>allbots</code>.</td></tr>
+      <tr><td>teamBalance</td><td>Even the teams up.</td></tr>
+      <tr><td>startrecord<br>startmvd / stopmvd</td><td>Server side demo recording, including
+      multi view demos.</td></tr>
+      <tr><td>ready / notready<br>teamready</td><td>Match readiness during warmup.</td></tr>
+      <tr><td>motd</td><td>Show the message of the day.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>VOTING</h2>
+    <div class="rule"></div>
+
+    <p>Players call votes with <code>/callvote</code>. Stock Quake allows a fixed handful.
+    Excessive Plus reads a vote definition file instead, so you decide exactly what can be
+    voted on and what arguments are allowed:</p>
+
+    <pre>seta xp_vote "callvote.txt"
+seta g_allowVote "1"</pre>
+
+    <p>Typical votes once that file is enabled:</p>
+
+    <pre>/callvote map q3dm6
+/callvote config instagib
+/callvote gametype tdm
+/callvote timelimit 15
+/callvote restart
+/callvote nextmap</pre>
+
+    <p>The vote file can restrict arguments per command, so <code>config</code> only accepts
+    configs that actually exist on the server. That is worth having: an unrestricted vote
+    command is a way for players to break your server by accident.</p>
+
+    <h2><span class="mk">&#9642;</span>CONFIG FILE SYNTAX</h2>
+    <div class="rule"></div>
+
+    <p>A config file is a list of console commands, one per line, executed in order.
+    <code>//</code> starts a comment.</p>
+
+    <table class="data rv">
+      <tr><th width="34%">COMMAND</th><th>WHAT IT DOES</th></tr>
+      <tr><td>set &lt;cvar&gt; &lt;value&gt;</td><td>Set a variable for this session.</td></tr>
+      <tr><td>seta &lt;cvar&gt; &lt;value&gt;</td><td>Set it and mark it archived, so it is
+      written back to the config file on exit. Use this for anything you want to persist.</td></tr>
+      <tr><td>sets &lt;cvar&gt; &lt;value&gt;</td><td>Set it and advertise it in serverinfo,
+      where anyone browsing can read it.</td></tr>
+      <tr><td>exec &lt;file.cfg&gt;</td><td>Run another config file.</td></tr>
+      <tr><td>bind &lt;key&gt; "&lt;command&gt;"</td><td>Bind a key. Chain commands with
+      <code>;</code> inside the quotes.</td></tr>
+      <tr><td>unbind &lt;key&gt;<br>bindlist</td><td>Remove one, or list them all.</td></tr>
+      <tr><td>toggle &lt;cvar&gt;</td><td>Flip between 0 and 1.</td></tr>
+      <tr><td>vstr &lt;cvar&gt;</td><td>Execute the contents of a cvar as a command. This is
+      how people build toggles and cycles out of nothing but variables.</td></tr>
+      <tr><td>wait</td><td>Pause one frame. Occasionally needed between commands in a
+      bind.</td></tr>
+      <tr><td>echo &lt;text&gt;</td><td>Print to your own console. Useful for checking a
+      config actually ran.</td></tr>
+    </table>
+
+    <p>A cycle built with <code>vstr</code>, since it is not obvious the first time you see
+    it:</p>
+
+    <pre>set fov1 "set cg_fov 90;  set fovtoggle vstr fov2"
+set fov2 "set cg_fov 110; set fovtoggle vstr fov1"
+set fovtoggle "vstr fov1"
+bind F5 "vstr fovtoggle"</pre>
+
+    <div class="warn"><b class="hot">ORDER MATTERS MORE THAN YOU EXPECT.</b> A
+    <code>map</code> command loads the map immediately, right there in the middle of your
+    config. Anything after it runs against a live game, and anything before it runs against
+    an empty one. Settings that must be read at map load, such as <code>sv_allowDownload</code>
+    or <code>bot_enable</code>, have to appear <b>before</b> the map line. Commands that need
+    a running game, such as <code>addbot</code>, have to appear <b>after</b> it. A setting in
+    the wrong half fails silently, which makes it a horrible thing to debug.</div>
+
+    <h2><span class="mk">&#9642;</span>THE COMMAND LINE</h2>
+    <div class="rule"></div>
+
+    <pre>ioq3ded.x86_64.exe +set dedicated 2 +set com_hunkMegs 512 +exec server.cfg</pre>
+
+    <table class="data rv">
+      <tr><th width="34%">SWITCH</th><th>WHAT IT DOES</th></tr>
+      <tr><td>+set &lt;cvar&gt; &lt;value&gt;</td><td>Set a cvar before anything else loads.
+      The only way to set variables the engine reads at startup.</td></tr>
+      <tr><td>+exec &lt;file&gt;</td><td>Run a config once started.</td></tr>
+      <tr><td>+set dedicated 1</td><td>LAN server.</td></tr>
+      <tr><td>+set dedicated 2</td><td>Internet server, reports to the master list.</td></tr>
+      <tr><td>+set fs_game &lt;mod&gt;</td><td>Run a mod folder.</td></tr>
+      <tr><td>+set net_port &lt;n&gt;</td><td>Listen on a specific port. 27960 is the
+      default.</td></tr>
+      <tr><td>+connect &lt;addr&gt;</td><td>Client only. Join a server on launch.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>TESTING WITH CHEATS</h2>
+    <div class="rule"></div>
+
+    <p>These need <code>sv_cheats 1</code>, which is why you start a test map with
+    <code>devmap</code> rather than <code>map</code>. They are invaluable when checking a
+    weapon config or hunting for coordinates.</p>
+
+    <table class="data rv">
+      <tr><th width="34%">COMMAND</th><th>WHAT IT DOES</th></tr>
+      <tr><td>give all<br>give weapons<br>give &lt;item&gt;</td><td>Hand yourself
+      equipment.</td></tr>
+      <tr><td>noclip</td><td>Fly through walls.</td></tr>
+      <tr><td>god<br>notarget</td><td>Invulnerable, or invisible to bots. <code>notarget</code>
+      is the one for watching bot behaviour without being attacked.</td></tr>
+      <tr><td>viewpos</td><td>Print your exact position and facing angle. This is how you get
+      coordinates for placing anything in a map.</td></tr>
+      <tr><td>r_showtris 1<br>r_speeds 1</td><td>Wireframe and rendering statistics.</td></tr>
+      <tr><td>timescale 0.2</td><td>Slow motion. Excellent for watching what a projectile
+      actually does.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>RECORDING AND CAPTURE</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="34%">COMMAND</th><th>WHAT IT DOES</th></tr>
+      <tr><td>record &lt;name&gt;<br>stoprecord</td><td>Record a demo from your own point of
+      view.</td></tr>
+      <tr><td>demo &lt;name&gt;</td><td>Play one back.</td></tr>
+      <tr><td>screenshot<br>screenshotJPEG</td><td>Save an image.</td></tr>
+      <tr><td>condump &lt;file.txt&gt;</td><td>Write the whole console scrollback to a file.
+      The right way to capture an error, instead of photographing the screen.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>CVARS WORTH KNOWING</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="34%">CVAR</th><th>WHAT IT DOES</th></tr>
+      <tr><td>sv_hostname</td><td>Name in the server browser.</td></tr>
+      <tr><td>sv_maxclients</td><td>Player slots. Bots occupy them too.</td></tr>
+      <tr><td>g_password</td><td>Set it and only people who know it can join.</td></tr>
+      <tr><td>sv_allowDownload<br>cl_allowDownload</td><td>Both must be 1 for a client to
+      fetch maps and mods it does not have.</td></tr>
+      <tr><td>sv_pure</td><td>1 makes the server send its full pk3 list, which is what pushes
+      custom skins and models to clients. It can also refuse players carrying unrelated
+      custom pk3s.</td></tr>
+      <tr><td>sv_dlURL</td><td>An HTTP address to download from instead of trickling files
+      through the game protocol. Vastly faster.</td></tr>
+      <tr><td>com_hunkMegs</td><td>Memory for maps and models. Large custom maps fail to load
+      without a generous value. If you see <code>Hunk_Alloc failed</code> on a small
+      allocation, the hunk is full rather than the request being large.</td></tr>
+      <tr><td>rate<br>snaps<br>cl_maxpackets</td><td>Client networking. Worth raising from
+      1999 defaults on a modern connection.</td></tr>
+      <tr><td>cg_drawFPS 1<br>cg_lagometer 1</td><td>Frame rate and connection quality on
+      screen.</td></tr>
+      <tr><td>sensitivity<br>cg_fov</td><td>Mouse speed and field of view. 90 is stock, most
+      players prefer more.</td></tr>
+    </table>
+
+    <p class="small" style="margin-top:16px">Type <code>cvarlist</code> or
+    <code>cmdlist</code> in any console for the complete list. Both accept a prefix, so
+    <code>cvarlist sv_</code> narrows it to server variables. That is faster than searching
+    the internet for a cvar you half remember.</p>
+
+  
+  </section>
+  <section class="sec" id="bots">
+
+
+    <p>Quake 3's bots are not a black box. Every part of one, how it moves, what it picks up,
+    how it talks, what it looks like, is a plain text file the game reads at startup. Nothing
+    here needs a compiler and nothing here needs the source code. This page covers the whole
+    set, in the order you would actually touch them.</p>
+
+    <div class="warn"><b class="hot">THE ONE RULE.</b> The bot library parses every file on
+    this page once, at server start, and caches the result. Editing a file and then kicking
+    and re-adding the bot changes nothing at all, because you get the cached copy back.
+    <b>Every change on this page needs a full server restart.</b> This wastes more admin time
+    than anything else about Quake 3 bots.</div>
+
+    <h2><span class="mk">&#9642;</span>THE FILES</h2>
+    <div class="rule"></div>
+
+    <p>Paths below are relative to your mod folder, or to <code>baseq3</code> if you are not
+    running a mod. The mod folder is searched first, so anything you put there shadows or
+    adds to what shipped in the pk3s.</p>
+
+    <table class="data rv">
+      <tr><th width="42%">FILE</th><th>WHAT IT CONTROLS</th></tr>
+      <tr><td>scripts\bots.txt</td>
+          <td>The roster. Which bots exist at all. Yours shadows the one inside pak0.</td></tr>
+      <tr><td>scripts\anything.bot</td>
+          <td>Extra roster entries, added on top of bots.txt instead of replacing it.</td></tr>
+      <tr><td>botfiles\bots\&lt;name&gt;_c.c</td>
+          <td>Personality. Aim, aggression, movement, item taste, chattiness.</td></tr>
+      <tr><td>botfiles\bots\&lt;name&gt;_t.c</td>
+          <td>What it says on game events, such as kills, deaths, joining and map end.</td></tr>
+      <tr><td>botfiles\bots\&lt;name&gt;_w.c<br>botfiles\bots\&lt;name&gt;_i.c</td>
+          <td>Weapon preference and item preference. Which gun it reaches for, what it
+          detours to pick up.</td></tr>
+      <tr><td>botfiles\rchat.c</td>
+          <td>What bots say back when a player types. One file, shared by every bot.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>THE ROSTER</h2>
+    <div class="rule"></div>
+
+    <p>The game reads <code>scripts/bots.txt</code>, then <b>also</b> scans
+    <code>scripts/</code> for any file ending in <code>.bot</code> and adds those on top.
+    That second part is the useful one. A <code>.bot</code> file is purely additive, so you
+    never have to copy or edit id's list to add your own bots.</p>
+
+    <pre>{
+name    Wraith                           // what you type after addbot
+funname ^0W^0r^0a^0i^0t^0h               // scoreboard name, colour codes ^0 to ^7
+model   bones/black                      // model/skin, head follows automatically
+aifile  bots/wraith_c.c                  // the personality file
+}</pre>
+
+    <p>Colour codes run <code>^0</code> to <code>^7</code> only: black, red, green, yellow,
+    blue, cyan, magenta, white. <code>^8</code> and <code>^9</code> do not exist and print as
+    literal text on the scoreboard.</p>
+
+    <h2><span class="mk">&#9642;</span>WHICH BOTS ACTUALLY SHOW UP</h2>
+    <div class="rule"></div>
+
+    <p>There is no cvar for "use these bots". <code>bot_minplayers</code> fills empty slots
+    by picking at <b>random</b> from the entire roster, and gives you no say in which. With
+    30-odd bots registered, the three you carefully built will rarely be the three that
+    appear.</p>
+
+    <p>Two ways around it, and they are opposites:</p>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">A</span>NAME THEM YOURSELF</div>
+      <div class="bd">
+        <p>Set <code>bot_minplayers 0</code> and add them explicitly from a config file:</p>
+        <pre>addbot Wraith  4 free 0
+addbot Vandal  4 free 1500
+addbot Sable   4 free 3000</pre>
+        <p>Arguments are <code>name</code>, <code>skill 1-5</code>, <code>team</code>,
+        <code>delay in ms</code>. Staggered delays stop them all landing on the same frame.</p>
+        <p><b class="hot">That config must run after a map is loaded.</b>
+        <code>addbot</code> belongs to the game module and does not exist until a map is
+        actually running, so put the <code>exec</code> line below your <code>map</code>
+        line, not above it.</p>
+        <p>Cost: a kicked bot stays kicked and slots never refill on their own.</p>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">B</span>SHRINK THE ROSTER</div>
+      <div class="bd">
+        <p>Put your own <code>scripts/bots.txt</code> in the mod folder. It shadows pak0's,
+        so only what you list plus your <code>.bot</code> files exist. Random fill then has
+        nothing else to pick.</p>
+        <p>Cost: <code>addbot sarge</code> and every other stock name stops working, because
+        those bots are no longer registered. Delete your file and they come back.</p>
+      </div>
+    </div>
+
+    <h2><span class="mk">&#9642;</span>PERSONALITY, THE _c.c FILE</h2>
+    <div class="rule"></div>
+
+    <p>Each character file holds several <code>skill</code> blocks, and the game loads the
+    one matching <code>g_spSkill</code>. Stock files define 1, 4 and 5. If your server runs a
+    skill number with no matching block, the bot falls back to defaults and everything you
+    tuned is ignored, silently.</p>
+
+    <p>Values run 0.0 to 1.0 unless noted. The ones that genuinely change how a bot feels to
+    play against:</p>
+
+    <table class="data rv">
+      <tr><th width="40%">CHARACTERISTIC</th><th>EFFECT</th></tr>
+      <tr><td>AIM_SKILL<br>AIM_ACCURACY</td>
+          <td>How well it shoots. These two are what people mean by "difficulty".</td></tr>
+      <tr><td>REACTIONTIME</td>
+          <td>Seconds before it responds to seeing you. Higher is slower and more human.</td></tr>
+      <tr><td>WALKER</td>
+          <td>1.0 means it never runs. Kills the strafe jumping that makes bots read as
+          machines. The single most atmospheric value in the file.</td></tr>
+      <tr><td>CAMPER</td>
+          <td>How much it sits still. <b class="hot">Handle with care.</b> High values send
+          bots to camp spots stored in the map's AAS data, and some maps have spots baked
+          inside solid geometry. A bot sent to one becomes stuck and unkillable. Keep it
+          below about 0.4 on unfamiliar maps.</td></tr>
+      <tr><td>SELFPRESERVATION</td>
+          <td>0.0 means it never breaks off and never runs for health. Relentless.</td></tr>
+      <tr><td>AGGRESSION<br>ALERTNESS</td>
+          <td>Willingness to start a fight, and how fast it notices one.</td></tr>
+      <tr><td>ATTACK_SKILL</td>
+          <td>Combat movement quality: circle strafing, dodging, keeping distance.</td></tr>
+      <tr><td>JUMPER<br>WEAPONJUMPING</td>
+          <td>How much it jumps around, and whether it rocket jumps.</td></tr>
+      <tr><td>CROUCHER</td>
+          <td>How often it ducks. Keep it small or it looks broken.</td></tr>
+      <tr><td>CHAT_FILE<br>CHAT_NAME</td>
+          <td>Which <code>_t.c</code> to read, and which <code>chat "name"</code> block
+          inside it. <b class="hot">CHAT_NAME is a lookup key, not a label.</b> Point it at a
+          block that does not exist and the bot fails to load.</td></tr>
+      <tr><td>CHAT_CPM</td>
+          <td>Typing speed in characters per minute. Sets the pause before a line appears.
+          Low feels deliberate, high feels frantic.</td></tr>
+      <tr><td>CHAT_REPLY<br>CHAT_RANDOM<br>CHAT_MISC</td>
+          <td>How often it answers a player, speaks unprompted, and chats in general.</td></tr>
+    </table>
+
+    <p class="small">Edit every skill block, not just one. It is easy to change skill 5 and
+    then wonder why nothing happened on a server running skill 4.</p>
+
+    <h2><span class="mk">&#9642;</span>WHAT THEY SAY</h2>
+    <div class="rule"></div>
+
+    <p>Two separate systems. Confusing them wastes an evening.</p>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">1</span>EVENT LINES, ONE FILE PER BOT</div>
+      <div class="bd">
+        <p><code>botfiles\bots\&lt;name&gt;_t.c</code> fires on things that happen: a kill, a
+        death, joining, the map ending, or a timer. One file per bot, so this is where an
+        individual voice lives. There are 28 event types, from <code>kill_rail</code> to
+        <code>death_drown</code>.</p>
+        <pre>type "kill_insult"
+{
+	"look up";
+	"same corner";
+	"ur loud";
+}</pre>
+        <p>The <code>random_misc</code> block is unprompted small talk on a timer, its rate
+        set by <code>CHARACTERISTIC_CHAT_RANDOM</code>. There is a fully commented
+        <code>example_t.c</code> inside pak4 listing every type and which player names each
+        one can substitute.</p>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">2</span>REPLIES, SHARED BY EVERYONE</div>
+      <div class="bd">
+        <p><code>botfiles\rchat.c</code> fires when a player types something. Quake loads
+        <b>one</b> reply file for the whole server. There is no per bot version, so every bot
+        answers questions in the same voice. Keep that text personality neutral and let the
+        event lines carry the characters.</p>
+        <pre>["lag", "lagging", "ping"] = 9
+{
+	"yeah its bad";
+	"my ping is awful";
+	"i thought it was me";
+}</pre>
+        <p>Keywords are substrings, matched anywhere in the message, and any one of them
+        matching is enough. Prefix a keyword with <code>!</code> to block the rule instead.
+        The number is priority: the highest eligible rule wins, then one of its lines is
+        picked at random.</p>
+        <p>There is also a capture form, which is what makes a reply feel like it landed:</p>
+        <pre>[("do you like ", 0)] = 8
+{
+	0, " is alright";
+	"never tried it";
+}</pre>
+        <p>Variable <code>0</code> holds whatever the player typed after the prefix.
+        <b class="hot">It only works inside the parenthesised form.</b> None of the 455
+        original rules use it in a plain keyword list, and doing so produces nothing.</p>
+      </div>
+    </div>
+
+    <div class="warn"><b class="hot">WHAT THIS IS NOT.</b> There is no language model here.
+    It matches substrings against a table written in 1999. No memory of what it said, no
+    tracking of the topic, no understanding of the question. It holds up convincingly for a
+    while and then answers something plainly wrong, and no amount of configuration fixes
+    that. The realistic goal is a room that does not feel empty.</div>
+
+    <h2><span class="mk">&#9642;</span>MODELS AND SKINS</h2>
+    <div class="rule"></div>
+
+    <p>Written as <code>model/skin</code>, for example <code>bones/black</code>. The head
+    follows the body skin automatically, so no separate <code>headmodel</code> line is
+    needed. Write just <code>bones</code> and you get the default skin.</p>
+
+    <p><b class="hot">Anything you reference must exist on every client.</b> A skin the
+    player does not have shows as a default model on their screen, not yours. Two things
+    make that work:</p>
+
+    <ul>
+      <li>Put skin pk3s in the <b>mod folder</b>, not <code>baseq3</code>. Baseq3 pk3s are
+      only sent to clients when the current map needs them, and player skins never
+      qualify.</li>
+      <li>Run <code>sv_pure 1</code>. That is what makes the server advertise its full pk3
+      list, including files it has not opened itself. Under <code>sv_pure 0</code> a client
+      only fetches what the server actually touched.</li>
+    </ul>
+
+    <h2><span class="mk">&#9642;</span>ADDING A BOT, START TO FINISH</h2>
+    <div class="rule"></div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">1</span>COPY A PERSONALITY</div>
+      <div class="bd"><p>Copy an existing <code>_c.c</code> to
+      <code>botfiles\bots\yourname_c.c</code> and change <code>CHARACTERISTIC_NAME</code> in
+      every skill block. Do not start from an empty file. A missing characteristic is a load
+      failure, not a default.</p></div>
+    </div>
+    <div class="step rv">
+      <div class="hd"><span class="n">2</span>GIVE IT A VOICE</div>
+      <div class="bd"><p>Copy a <code>_t.c</code>, change the <code>chat "name"</code> at the
+      top, and point <code>CHARACTERISTIC_CHAT_FILE</code> and <code>CHAT_NAME</code> at it.
+      Or point at an existing file to borrow somebody else's voice.</p></div>
+    </div>
+    <div class="step rv">
+      <div class="hd"><span class="n">3</span>ADD TO THE ROSTER</div>
+      <div class="bd"><p>A new block in a <code>.bot</code> file in <code>scripts\</code>,
+      with <code>name</code>, <code>model</code> and <code>aifile</code>.</p></div>
+    </div>
+    <div class="step rv">
+      <div class="hd"><span class="n">4</span>TEST IT</div>
+      <div class="bd"><pre>rcon addbot Wraith 4</pre></div>
+    </div>
+    <div class="step rv">
+      <div class="hd"><span class="n">5</span>RESTART AFTER EVERY EDIT</div>
+      <div class="bd"><p>Not <code>map_restart</code>, and not kick and re-add. A full server
+      restart, because of the caching.</p></div>
+    </div>
+
+    <h2><span class="mk">&#9642;</span>CVARS WORTH KNOWING</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="34%">CVAR</th><th>EFFECT</th></tr>
+      <tr><td>bot_enable 1</td><td>Must be set <b>before the first map loads</b>. Not
+      something you can flip on a running server.</td></tr>
+      <tr><td>g_spSkill 1-5</td><td>Skill of auto filled bots, and of <code>addbot</code>
+      calls that give no number.</td></tr>
+      <tr><td>bot_minplayers</td><td>Auto fill target. 0 is off.</td></tr>
+      <tr><td>bot_nochat 1</td><td>Silences every chat file on this page. Worth checking
+      first when bots are mysteriously mute, because it hides all of that work at once.</td></tr>
+      <tr><td>bot_fastchat 1</td><td>They chat far more often. Useful for testing, exhausting
+      to play with.</td></tr>
+      <tr><td>bot_thinktime</td><td>Milliseconds between decisions. Lower is sharper.</td></tr>
+      <tr><td>bot_challenge 1</td><td>More aggressive play at the same skill number.</td></tr>
+      <tr><td>g_botsFile</td><td>Load the roster from a path of your choosing instead of
+      <code>scripts/bots.txt</code>.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>WHEN IT GOES WRONG</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="40%">CONSOLE SAYS</th><th>WHAT IT MEANS</th></tr>
+      <tr><td>Bot 'Name' is not defined</td>
+          <td>It is not in the roster. The game reads <code>scripts/</code>, not
+          <code>botfiles/</code>. A roster file in the wrong folder is invisible.</td></tr>
+      <tr><td>couldn't find chat &lt;name&gt;<br>in bots/&lt;file&gt;_t.c</td>
+          <td><code>CHARACTERISTIC_CHAT_NAME</code> is a lookup key into the chat file. It
+          must match the <code>chat "..."</code> block inside it exactly.</td></tr>
+      <tr><td>loaded cached skill 5.000000</td>
+          <td>Your edit was never read. This is the caching. Restart the server.</td></tr>
+      <tr><td>camp spot at x y z in solid</td>
+          <td>The map's AAS data has a camp spot inside geometry. Lower
+          <code>CHARACTERISTIC_CAMPER</code>.</td></tr>
+      <tr><td>Bot shows as a<br>default model</td>
+          <td>The client does not have that skin. Check the pk3 is in the mod folder and that
+          <code>sv_pure</code> is 1.</td></tr>
+      <tr><td>Bots never speak</td>
+          <td>Check <code>bot_nochat</code> is 0, then check the chat characteristics are not
+          all zero.</td></tr>
+    </table>
+
+  
+  </section>
+  <section class="sec" id="weapons">
+
+
+    <p>Excessive Plus replaces Quake 3's hardcoded weapon numbers with a text format you can
+    rewrite and reload without restarting anything. Damage, knockback, fire rate, spread,
+    projectile speed, visual effects, how heavy a gun makes you, what happens when you die,
+    all of it is editable, and a whole new mode is one file.</p>
+
+    <div class="warn"><b class="hot">THE BEST PART.</b> Configs load live. No restart, no map
+    change, no reconnect. Type <code>rcon load chaos</code> and the entire weapon set changes
+    under everyone's feet mid fight.</div>
+
+    <h2><span class="mk">&#9642;</span>WHERE THINGS LIVE</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="40%">PATH</th><th>WHAT IT IS</th></tr>
+      <tr><td>excessiveplus\conf\*.cfg</td><td>The modes. One file each.</td></tr>
+      <tr><td>excessiveplus\conf\default.cfg</td><td>id's numbers written out in full. The
+      reference for every key that exists, roughly 1300 heavily commented lines. Read it, do
+      not edit it.</td></tr>
+      <tr><td>excessiveplus\conf\sample.cfg</td><td>A shorter annotated starting point.</td></tr>
+      <tr><td>excessiveplus\*.txt</td><td>Map rotations, with a config attached per map.</td></tr>
+    </table>
+
+    <p>Three ways to load one:</p>
+    <pre>rcon load chaos                    // live, right now
+seta xp_config "chaos"             // at server start
+q3dm6 { $xp_config = "chaos"; }    // per map, in a rotation file</pre>
+
+    <h2><span class="mk">&#9642;</span>ANATOMY OF A CONFIG</h2>
+    <div class="rule"></div>
+
+    <pre>Config {
+    Name = "Low Gravity";
+    Version = "1";
+    Author = "you";
+}
+
+Misc {
+    // everything that is not one specific weapon
+}
+
+Rocket Launcher {
+    Damage = 60;
+    Splash Knockback = 400;
+}</pre>
+
+    <p>Weapon block names are the human ones: <code>Gauntlet</code>,
+    <code>Machinegun</code>, <code>Shotgun</code>, <code>Grenade Launcher</code>,
+    <code>Rocket Launcher</code>, <code>Lightning Gun</code>, <code>Railgun</code>,
+    <code>Plasma Gun</code>, <code>BFG</code>, <code>Grapple</code> and
+    <code>Suicide</code>.</p>
+
+    <p>Anything you leave out keeps its default. A config is a list of differences, not a
+    complete description, so short files are normal and good. Three lines is a valid mode.</p>
+
+    <h2><span class="mk">&#9642;</span>THE IDEA THAT MATTERS MOST</h2>
+    <div class="rule"></div>
+
+    <p>In stock Quake 3, how hard a weapon shoves you is tied to how much it hurts. Excessive
+    Plus splits the two apart, and that single separation is where nearly every interesting
+    mode comes from.</p>
+
+    <table class="data rv">
+      <tr><th width="34%">KEY</th><th>WHAT IT DOES</th></tr>
+      <tr><td>Damage</td><td>Health removed.</td></tr>
+      <tr><td>Knockback</td><td>How hard they get pushed. Defaults to <code>Damage</code> if
+      you do not set it, which is why the two feel welded together in stock Quake.</td></tr>
+      <tr><td>Splash Damage<br>Splash Knockback<br>Radius</td>
+          <td>The same pair again for explosions, plus how far the blast reaches.</td></tr>
+      <tr><td>Self Damage<br>Self Knockback</td>
+          <td>What your own explosion does to you. This is the rocket jump dial.</td></tr>
+      <tr><td>Firing Knockback</td><td>Recoil. Pushes <b>you</b> when you pull the trigger,
+      even on a total miss.</td></tr>
+      <tr><td>Team Knockback</td><td>A separate value for teammates.</td></tr>
+    </table>
+
+    <p>Set <code>Damage = 0</code> with a large <code>Knockback</code> and you get a weapon
+    that cannot hurt anyone but throws them across the room. That alone is a game mode: no
+    kills, win by shoving people into the void.</p>
+
+    <p>Set knockback <b>negative</b> and it pulls them toward you instead:</p>
+
+    <pre>Machinegun {
+    Damage = 5;
+    Knockback = -180;    // a tractor beam
+    Spread = 60;
+}</pre>
+
+    <h2><span class="mk">&#9642;</span>FEEL AND TIMING</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="34%">KEY</th><th>WHAT IT DOES</th></tr>
+      <tr><td>Cycle</td><td>Milliseconds between shots, so the fire rate. Rocket Launcher
+      ships at 800, Machinegun at 100.</td></tr>
+      <tr><td>Spread</td><td>Inaccuracy cone. Shotgun ships at 700, Machinegun at 200.</td></tr>
+      <tr><td>Pellet Count</td><td>Shotgun only. 11 by default.</td></tr>
+      <tr><td>Fixed Pattern<br>Radial</td><td>Turns the random shotgun spread into a fixed
+      one. <code>Radial = yes; Pellet Count = 16; Fixed Pattern = 2 | PATTERN_TIGHT;</code>
+      reproduces CPMA's shotgun.</td></tr>
+      <tr><td>Speed</td><td>Projectile travel speed. Rockets are 900.</td></tr>
+      <tr><td>Range</td><td>Lightning Gun reach.</td></tr>
+      <tr><td>Max Hits</td><td>Railgun penetration, meaning how many people one slug passes
+      through.</td></tr>
+      <tr><td>Bounce<br>Gravity<br>Time to Live</td><td>Projectile behaviour. Bouncing
+      rockets, plasma that falls, grenades that never expire.</td></tr>
+      <tr><td>Regen</td><td>Ammo regenerates over time.</td></tr>
+      <tr><td>Ammo<br>Ammo Limit</td><td>Starting count and cap.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>WEIGHT, GUNS THAT SLOW YOU DOWN</h2>
+    <div class="rule"></div>
+
+    <p>An underused one. Movement speed becomes <b>player speed divided by weapon
+    weight</b>, so a heavy gun makes you slow while you are holding it.</p>
+
+    <pre>BFG {
+    Weight = 2.5;           // half speed while carrying it
+    Firing Weight = 4.0;    // crawling while actually firing
+}</pre>
+
+    <p>That is an entire balance system on its own. Powerful weapons cost mobility instead of
+    being rationed by ammo, which changes how people move around a map far more than damage
+    numbers do. <code>Firing Weight</code> applies only during the shot.</p>
+
+    <h2><span class="mk">&#9642;</span>STYLES, LOOKS AND BEHAVIOUR</h2>
+    <div class="rule"></div>
+
+    <p><code>Style</code> is a bitmask, combined with <code>|</code>. Some flags are purely
+    cosmetic, others change what the weapon is.</p>
+
+    <table class="data rv">
+      <tr><th width="42%">FLAG</th><th>EFFECT</th></tr>
+      <tr><td>WPS_RAILTRAIL</td><td>Draws a rail trail. Works on any weapon.</td></tr>
+      <tr><td>WPS_IMPACT_ROCKET<br>WPS_IMPACT_PLASMA<br>WPS_IMPACT_RAIL<br>WPS_IMPACT_BFG</td>
+          <td>Which explosion appears on hit, regardless of what fired it. A machinegun with
+          rocket impacts.</td></tr>
+      <tr><td>WPS_ROCKET_GUIDED</td><td>Steer the rocket with your mouse after firing.</td></tr>
+      <tr><td>WPS_ROCKET_HOMING</td><td>Rockets chase people. Pair it with
+      <code>Homing Factor</code>.</td></tr>
+      <tr><td>WPS_GRENADE_STICKY</td><td>Grenades stick where they land, so mines.</td></tr>
+      <tr><td>WPS_PLASMA_SPLIT</td><td>Three plasma streams instead of one.</td></tr>
+      <tr><td>WPS_GRAPPLE_ROPE</td><td>Swing on the hook instead of being reeled in.</td></tr>
+      <tr><td>WPS_BFG_PANTS<br>WPS_BFG_SOD</td><td>Two alternative BFG behaviours carried over
+      from older mods.</td></tr>
+      <tr><td>Style = no;</td><td>No effect at all. An invisible weapon.</td></tr>
+    </table>
+
+    <div class="warn"><b class="hot">THE LAG TRAP.</b> <code>WPS_RAILTRAIL</code> generates
+    one network event <b>per pellet</b>. Put it on a shotgun firing 14 pellets and you emit
+    14 events in a single frame, which blows past Quake 3's per snapshot event budget and
+    stalls everyone on the server. Never put rail trails on multi pellet weapons. Use
+    <code>WPS_IMPACT_*</code> instead, which costs almost nothing.</div>
+
+    <h2><span class="mk">&#9642;</span>THE MISC BLOCK</h2>
+    <div class="rule"></div>
+
+    <p>Everything that is not one specific gun.</p>
+
+    <table class="data rv">
+      <tr><th width="38%">KEY</th><th>WHAT IT DOES</th></tr>
+      <tr><td>Start Weapons</td><td>What you spawn holding. <code>WP_ALL</code>,
+      <code>WP_NONE</code>, or a list joined with <code>|</code>.</td></tr>
+      <tr><td>Start Weapon</td><td>Which one is actually in your hands on spawn.</td></tr>
+      <tr><td>Weapons</td><td>Which weapons exist as pickups in the map at all.
+      <code>WP_NONE</code> strips the map bare.</td></tr>
+      <tr><td>Items<br>Ammos</td><td>The same idea for items and ammo boxes.
+      <code>IT_ALL</code>, or a list such as
+      <code>IT_HEALTH_SMALL | IT_TELEPORTER</code>.</td></tr>
+      <tr><td>Start Powerups<br>Start Powerups Duration</td>
+          <td>Spawn holding quad, flight, invisibility or regeneration. Duration in
+          seconds.</td></tr>
+      <tr><td>Health<br>Health Soft Limit<br>Health Hard Limit</td>
+          <td>Spawn health, the point where it starts decaying, and the absolute ceiling.</td></tr>
+      <tr><td>$g_gravity</td><td>800 is normal. <b class="hot">Never use 0.</b> Quake's
+      movement code stops behaving and players drift with no way to steer. Around 260 gives a
+      usable low gravity.</td></tr>
+      <tr><td>$xp_physics</td><td>Movement flags: <code>PHYSICS_RAMP_JUMPS</code>,
+      <code>PHYSICS_DOUBLE_JUMPS</code>, <code>PHYSICS_AIR_STEPS</code>,
+      <code>PHYSICS_QUAKE_LIVE</code>, <code>PHYSICS_STEP_JUMPS</code>.</td></tr>
+      <tr><td>DM Flags</td><td><code>DM_INFINITE_AMMO</code>,
+      <code>DM_NO_SELF_DAMAGE</code>, <code>DM_NO_FALLING_DAMAGE</code>,
+      <code>DM_DROP_WEAPONS</code>, <code>DM_TELEPORT_SPEED</code>,
+      <code>DM_VOID_RESPAWN</code>.</td></tr>
+      <tr><td>Spawn Protection</td><td>Seconds of invulnerability after respawning.</td></tr>
+      <tr><td>Flight Factor<br>Floating Speed Rate</td><td>Flying speed, and how smoothly
+      velocity changes while airborne.</td></tr>
+      <tr><td>Anti Camp</td><td>Punishes standing still.</td></tr>
+      <tr><td>Team Red { }<br>Team Blue { }</td><td>Nested blocks giving each team a different
+      loadout. This is how asymmetric modes work, with two sides playing by different
+      rules.</td></tr>
+    </table>
+
+    <h2><span class="mk">&#9642;</span>THE SUICIDE BLOCK</h2>
+    <div class="rule"></div>
+
+    <p>A weapon that fires when you die. Give it damage and a radius and every corpse
+    explodes.</p>
+
+    <pre>Suicide {
+    Damage = 200;
+    Knockback = 400;
+    Radius = 250;
+    Style = WPS_IMPACT_ROCKET;
+}</pre>
+
+    <h2><span class="mk">&#9642;</span>WORKED EXAMPLES</h2>
+    <div class="rule"></div>
+
+    <p>Each of these is a complete, working config. They are short because a config only
+    states differences.</p>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">1</span>INSTAGIB</div>
+      <div class="bd">
+        <p>One shot rails and nothing else on the map.</p>
+        <pre>Misc {
+    Start Weapons = WP_RAILGUN | WP_GAUNTLET;
+    Start Weapon  = WP_RAILGUN;
+    Weapons = WP_NONE;          // no guns lying around
+    Items   = IT_NONE;          // no armour, no health
+    DM Flags = DM_INFINITE_AMMO;
+}
+
+Railgun {
+    Damage = 1000;
+    Cycle  = 1500;
+}</pre>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">2</span>ADDING A WEAPON TO EVERY SPAWN</div>
+      <div class="bd">
+        <p>Give people the launcher from the start without touching anything else. Note that
+        <code>Start Weapons</code> is a list, so include the gauntlet or they spawn unable to
+        melee.</p>
+        <pre>Misc {
+    Start Weapons = WP_GAUNTLET | WP_MACHINEGUN | WP_ROCKET_LAUNCHER;
+    Start Weapon  = WP_ROCKET_LAUNCHER;
+}</pre>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">3</span>A GUN THAT ONLY MOVES PEOPLE</div>
+      <div class="bd">
+        <p>No damage anywhere, enormous knockback, no falling damage so the fall itself is
+        the fun part rather than the punishment.</p>
+        <pre>Misc {
+    Start Weapons = WP_ALL;
+    DM Flags = DM_INFINITE_AMMO | DM_NO_FALLING_DAMAGE;
+}
+
+Rocket Launcher {
+    Damage = 0;
+    Splash Damage = 0;
+    Splash Knockback = 900;
+    Radius = 250;
+    Style = WPS_IMPACT_ROCKET;
+}</pre>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">4</span>ASYMMETRIC TEAMS</div>
+      <div class="bd">
+        <p>Red gets one melee weapon, blue gets the arsenal. Nested team blocks override the
+        outer Misc values for that team only.</p>
+        <pre>Misc {
+    Start Weapons = WP_MACHINEGUN;
+
+    Team Red {
+        Start Weapons  = WP_GAUNTLET;
+        Start Powerups = PW_INVIS | PW_REGEN;
+    }
+    Team Blue {
+        Start Weapons = WP_ALL;
+    }
+}</pre>
+      </div>
+    </div>
+
+    <h2><span class="mk">&#9642;</span>BUILDING YOUR OWN</h2>
+    <div class="rule"></div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">1</span>START FROM A NEIGHBOUR</div>
+      <div class="bd"><p>Copy whichever config is closest to what you want into
+      <code>conf\yourname.cfg</code>. Do not start from <code>default.cfg</code>, which is
+      1300 lines when you only need the differences.</p></div>
+    </div>
+    <div class="step rv">
+      <div class="hd"><span class="n">2</span>CHANGE ONE THING</div>
+      <div class="bd"><p>One value at a time. Weapon feel is extremely sensitive, and two
+      changes at once tells you nothing about which one did what.</p></div>
+    </div>
+    <div class="step rv">
+      <div class="hd"><span class="n">3</span>LOAD IT LIVE</div>
+      <div class="bd"><pre>rcon load yourname</pre>
+      <p>Changes apply immediately, mid game. A syntax error prints in the server console and
+      the previous config stays loaded, so a broken file cannot take the server down.</p></div>
+    </div>
+    <div class="step rv">
+      <div class="hd"><span class="n">4</span>PUT IT IN ROTATION</div>
+      <div class="bd"><pre>q3dm6 {
+	$xp_config = "yourname";
+	$timelimit = 15;
+}</pre></div>
+    </div>
+
+    <h2><span class="mk">&#9642;</span>WHEN IT GOES WRONG</h2>
+    <div class="rule"></div>
+
+    <table class="data rv">
+      <tr><th width="40%">SYMPTOM</th><th>CAUSE</th></tr>
+      <tr><td>Nothing changed after<br><code>rcon load</code></td>
+          <td>A parse error. The console names the line. The previous config is still
+          running.</td></tr>
+      <tr><td>Sudden lag whenever a<br>weapon fires</td>
+          <td>Per pellet events. Almost always <code>WPS_RAILTRAIL</code> on a shotgun.</td></tr>
+      <tr><td>Players drift and<br>cannot steer</td>
+          <td><code>$g_gravity</code> at or near 0. Use 200 to 300 instead.</td></tr>
+      <tr><td>A weapon does<br>nothing at all</td>
+          <td><code>Damage</code> and <code>Knockback</code> both 0, or the weapon appears in
+          neither <code>Start Weapons</code> nor <code>Weapons</code>.</td></tr>
+      <tr><td>Spawning with no<br>melee attack</td>
+          <td><code>WP_GAUNTLET</code> missing from <code>Start Weapons</code>. It is not
+          implied.</td></tr>
+      <tr><td>Config not found</td>
+          <td>It must sit in <code>excessiveplus\conf\</code> and be loaded by name, with no
+          <code>.cfg</code> on the end.</td></tr>
+    </table>
+
+    <p class="small" style="margin-top:16px"><code>conf\default.cfg</code> is the real
+    documentation. Every key that exists is in there with a comment explaining it, including
+    a good many not covered on this page.</p>
+
+  
+  </section>
+  </div>
+
+  <div class="footer">
+    <span class="skull">&#10013;</span> &nbsp; CONFIGURATION ALL THE WAY DOWN &nbsp;
+    <span class="skull">&#10013;</span>
+    <br><br>
+    BEST VIEWED AT 1024x768 &nbsp;|&nbsp; LAST UPDATED 21.08.2026
+    <br>
+    <span style="color:#3d362d">QUAKE III ARENA &#10013; DEVELOPER</span>
+  </div>
+
+</div>
+</div>
+<script>
+(function(){
+  var reveal = function(){
+    if(!('IntersectionObserver' in window)){
+      [].forEach.call(document.querySelectorAll('.rv'), function(e){e.classList.add('seen')});
+      return null;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('seen'); io.unobserve(en.target); }
+      });
+    }, {rootMargin:'0px 0px -40px 0px'});
+    return io;
+  };
+  var io = reveal();
+  window.__arm = function(root){
+    if(!io) return;
+    [].forEach.call((root||document).querySelectorAll('.rv:not(.seen)'), function(e){io.observe(e)});
+  };
+  window.__arm(document);
+})();
+
+(function(){
+  var ART = {
+    overview: 'img/g_overview.gif',
+    commands: 'img/b_commands.jpg',
+    bots:     'img/g_bots.gif',
+    weapons:  'img/b_weapons.jpg'
+  };
+  // a small still shown instantly while the heavier animation downloads
+  var POSTER = {
+    overview: 'img/b_dev.jpg',
+    commands: 'img/b_commands.jpg',
+    bots:     'img/b_bots.jpg',
+    weapons:  'img/b_weapons.jpg'
+  };
+  var SUB = {
+    overview: 'RUNNING AND MODIFYING A QUAKE III SERVER',
+    commands: 'CONSOLE, RCON AND CONFIG FILES',
+    bots:     'ROSTERS, PERSONALITIES AND CHAT',
+    weapons:  'EXCESSIVE PLUS GAMEPLAY CONFIGS'
+  };
+  var art = document.getElementById('art');
+  var poster = document.getElementById('poster');
+  var sub = document.getElementById('bsub');
+  var links = [].slice.call(document.querySelectorAll('.subtabs a'));
+  var secs  = [].slice.call(document.querySelectorAll('.sec'));
+
+  function show(id, push){
+    if(!ART[id]) id = 'overview';
+    links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-sec') === id); });
+    secs.forEach(function(s){ s.classList.toggle('on', s.id === id); });
+
+    // still first, animation over it once it has actually downloaded
+    art.classList.remove('show');
+    poster.style.backgroundImage = 'url("' + POSTER[id] + '")';
+    var img = new Image();
+    img.onload = function(){
+      art.style.backgroundImage = 'url("' + ART[id] + '")';
+      art.classList.add('show');
+    };
+    img.src = ART[id];
+
+    sub.style.opacity = 0;
+    setTimeout(function(){ sub.innerHTML = SUB[id]; sub.style.opacity = 1; }, 160);
+
+    if(push && history.replaceState) history.replaceState(null, '', '#' + id);
+    if(window.__arm) window.__arm(document.getElementById(id));
+  }
+
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[data-sec]') : null;
+    if(!a) return;
+    e.preventDefault();
+    show(a.getAttribute('data-sec'), true);
+    var top = document.querySelector('.subtabs');
+    if(top && top.getBoundingClientRect().top < 0) top.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  window.addEventListener('hashchange', function(){ show(location.hash.replace('#',''), false); });
+  show(location.hash.replace('#','') || 'overview', false);
+})();
+</script>
+</body>
+</html>

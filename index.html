@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>:: CROW'S QUAKE III ARENA SERVER ::</title>
+<style>
+  :root{
+    --void:#0a0908; --panel:#16130f; --panel2:#1d1915; --edge:#2f2820;
+    --bone:#b3a793; --ash:#d5c9b4; --dim:#6f6558;
+    --blood:#8a1e12; --blood2:#4d1008; --rust:#7a4d22;
+  }
+  html,body{margin:0;padding:0}
+  html{
+    background:
+      linear-gradient(180deg, rgba(10,9,8,.87) 0%, rgba(10,9,8,.94) 100%),
+      url("img/backdrop.jpg") center center / cover no-repeat fixed,
+      var(--void);
+  }
+  body{
+    padding:16px 10px 46px;
+    background:transparent;
+    background-image:
+      /* grime */
+      repeating-linear-gradient(23deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(-14deg, rgba(0,0,0,.35) 0 1px, transparent 1px 5px),
+      /* cold light from above, blood pooled below */
+      radial-gradient(ellipse at 50% -10%, #1e1a15 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 115%, #210a05 0%, transparent 60%);
+    color:var(--bone);
+    font-family:Verdana,Arial,Helvetica,sans-serif;
+    font-size:12px; line-height:1.6;
+  }
+  /* vignette over everything */
+  body:before{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9;
+    background:radial-gradient(ellipse at 50% 45%, transparent 42%, rgba(0,0,0,.72) 100%);
+  }
+  .page{width:760px;margin:0 auto;position:relative;z-index:1}
+
+  /* ---- pitted iron plate ---- */
+  .plate{
+    position:relative;
+    background:var(--panel);
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.010) 0 1px, transparent 1px 9px),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.30) 0 1px, transparent 1px 4px),
+      linear-gradient(180deg,#191510,#100d0a);
+    border:1px solid #000;
+    box-shadow:
+      inset 0 0 0 1px #2b241c,
+      inset 0 60px 90px rgba(0,0,0,.55),
+      0 0 40px rgba(0,0,0,.95);
+  }
+  .plate:before,.plate:after{
+    content:""; position:absolute; top:9px; width:6px; height:6px; border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,#6b6157,#2a241d 62%,#0a0908);
+    box-shadow:0 1px 2px #000;
+  }
+  .plate:before{left:9px} .plate:after{right:9px}
+
+  /* ---- banner ---- */
+  .banner{
+    position:relative; text-align:center; padding:26px 12px 14px;
+    border-bottom:1px solid #000;
+    background:linear-gradient(180deg,#0e0c0a 0%,#141110 100%);
+    overflow:hidden;
+    box-shadow:inset 0 -1px 0 #2b241c;
+  }
+  .banner h1{
+    margin:0; font-family:Impact,"Arial Black",Arial,sans-serif; font-weight:normal;
+    font-size:41px; letter-spacing:4px; line-height:1;
+    background:linear-gradient(180deg,#e6dccb 0%,#9d9384 38%,#5d554a 72%,#332d26 100%);
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent; -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 2px 0 #000) drop-shadow(0 4px 10px rgba(0,0,0,.9));
+  }
+  .banner .sub{
+    margin-top:9px; color:var(--dim); font-size:9.5px; letter-spacing:4px;
+    text-transform:uppercase;
+  }
+  .banner .sub b{color:var(--blood)}
+
+
+  .inner{padding:20px 24px 8px}
+
+  /* ---- headings ---- */
+  h2{
+    font-family:"Arial Black",Arial,sans-serif; font-size:12px; letter-spacing:4px;
+    text-transform:uppercase; color:var(--ash); margin:30px 0 3px;
+    text-shadow:0 2px 0 #000;
+  }
+  h2 .mk{color:var(--blood); margin-right:6px}
+  .rule{
+    height:1px; margin:7px 0 14px;
+    background:linear-gradient(90deg,var(--blood) 0%,var(--rust) 14%,#2b241c 46%,transparent 100%);
+    box-shadow:0 1px 0 #000;
+  }
+
+  p{margin:8px 0}
+  a{color:#9a8f7d;text-decoration:underline}
+  a:visited{color:#8a7f70}
+  a:hover{color:var(--ash)}
+  .small{font-size:11px;color:var(--dim)}
+  b.hot{color:#b8452e}
+
+  code{font-family:"Courier New",Courier,monospace;font-size:12px;color:#c0a878}
+  pre{
+    font-family:"Courier New",Courier,monospace; font-size:12px;
+    background:#080706; color:#9c8f7a; border:1px solid #000;
+    box-shadow:inset 0 0 0 1px #2b241c, inset 0 0 26px rgba(0,0,0,.85);
+    padding:10px 12px; margin:10px 0; overflow-x:auto;
+  }
+
+  /* ---- steps ---- */
+  .step{
+    border:1px solid #000; background:var(--panel2); margin:14px 0;
+    box-shadow:inset 0 0 0 1px #2b241c, 0 2px 10px rgba(0,0,0,.6);
+  }
+  .step .hd{
+    background:linear-gradient(180deg,#241a14,#150f0b);
+    color:#c3b7a2; padding:8px 12px; border-bottom:1px solid #000;
+    font-family:"Arial Black",Arial,sans-serif; font-size:10.5px; letter-spacing:3px;
+    box-shadow:inset 0 1px 0 #33291f;
+  }
+  .step .hd{display:flex; align-items:center}
+  .step .hd .n{
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    width:20px; height:16px; margin-right:11px;
+    font-family:"Courier New",Courier,monospace; font-size:13px; font-weight:bold;
+    letter-spacing:0; line-height:1;
+    background:linear-gradient(180deg,var(--blood),var(--blood2));
+    color:#e8ddc9; border:1px solid #000; text-shadow:0 1px 0 #000;
+    box-shadow:inset 0 1px 0 rgba(255,120,90,.28);
+  }
+  .step .bd{padding:12px 14px}
+
+  /* ---- download ---- */
+  .dlbox{
+    border:1px solid #000; background:#0c0a08; text-align:center;
+    padding:22px 12px 16px; margin:18px 0;
+    box-shadow:inset 0 0 0 1px #33291f, inset 0 0 60px rgba(90,15,8,.30);
+  }
+  .dlbox a.dl{
+    display:inline-block; text-decoration:none; color:#e8ddc9;
+    font-family:"Arial Black",Arial,sans-serif; font-size:15px; letter-spacing:3px;
+    background:linear-gradient(180deg,#2a1c15 0%,#1a110d 50%,#241009 100%);
+    border:1px solid #000; padding:13px 30px;
+    box-shadow:
+      inset 0 0 0 1px #4a382a,
+      inset 0 1px 0 rgba(255,190,150,.14),
+      0 0 26px rgba(110,20,10,.45);
+    text-shadow:0 2px 0 #000;
+  }
+  .dlbox a.dl:hover{
+    color:#fff3e0;
+    background:linear-gradient(180deg,#3a2419 0%,#24160f 50%,#3a160c 100%);
+    box-shadow:inset 0 0 0 1px #6b4a33, 0 0 40px rgba(150,30,12,.65);
+  }
+  .dlbox .sz{color:var(--dim);font-size:9.5px;margin-top:12px;letter-spacing:3px}
+
+  /* ---- address ---- */
+  .addrbox{
+    border:1px solid #000; background:#080706; text-align:center;
+    padding:18px 12px; margin:16px 0;
+    box-shadow:inset 0 0 0 1px #33291f, inset 0 0 50px rgba(0,0,0,.9);
+  }
+  .addrbox .lbl{color:var(--dim);font-size:9.5px;letter-spacing:4px}
+  .addrbox .ip{
+    font-family:"Courier New",Courier,monospace; font-size:24px; font-weight:bold;
+    color:#d8cbb2; text-shadow:0 0 18px rgba(180,60,30,.5), 0 2px 0 #000;
+    margin-top:7px; letter-spacing:1px;
+  }
+
+
+  table.data{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
+  table.data th{
+    background:linear-gradient(180deg,#241d16,#161210); color:#c3b7a2;
+    text-align:left; padding:7px 9px; border:1px solid #000;
+    font-family:"Arial Black",Arial,sans-serif; font-size:9.5px; letter-spacing:2px;
+  }
+  table.data td{
+    padding:7px 9px; border:1px solid #000; background:#171310;
+    vertical-align:top; color:#8f8577;
+  }
+  table.data tr:nth-child(even) td{background:#131110}
+  table.data td:first-child{color:var(--bone)}
+
+  .footer{
+    margin-top:26px; text-align:center; font-size:9.5px; color:#5c5245;
+    border-top:1px solid #000; padding:18px 0 20px; letter-spacing:2px;
+    background:linear-gradient(180deg,#0d0b09,#131110);
+    box-shadow:inset 0 1px 0 #2b241c;
+  }
+  .counter{
+    display:inline-block;background:#060505;border:1px solid #000;padding:4px 10px;
+    box-shadow:inset 0 0 0 1px #2b241c;
+    font-family:"Courier New",monospace;color:#8a7a62;letter-spacing:5px;font-size:13px;
+  }
+  .skull{color:var(--blood2);font-size:13px}
+
+  @media(max-width:800px){.page{width:auto}.banner h1{font-size:27px;letter-spacing:2px}}
+
+  /* ---- warning callout ---- */
+  .warn{
+    border:1px solid #000; background:#0f0a08; margin:16px 0; padding:12px 14px;
+    box-shadow:inset 0 0 0 1px #3a2419, inset 0 0 40px rgba(90,15,8,.28);
+    color:#a2937d;
+  }
+  table.data td code{font-size:11px}
+
+  /* ---- bullets: a drawn square, so nothing has to be optically centred ---- */
+  ul{list-style:none; margin:10px 0; padding:0}
+  ul li{position:relative; padding-left:24px; margin:6px 0}
+  ul li:before{
+    content:""; position:absolute; left:2px; top:.45em;
+    width:7px; height:7px;
+    background:linear-gradient(180deg,var(--blood),var(--blood2));
+    border:1px solid #000;
+    box-shadow:inset 0 1px 0 rgba(255,120,90,.30);
+  }
+
+  /* ---- banner art layers: a still poster, then the animation over it ---- */
+  .banner{position:relative; isolation:isolate}
+  .banner .poster, .banner .art{
+    position:absolute; inset:0;
+    background-position:center center; background-size:cover; background-repeat:no-repeat;
+    transform:scale(1.04);
+  }
+  .banner .poster{z-index:0; opacity:1; transition:opacity .4s ease}
+  .banner .art{z-index:1; opacity:0; transition:opacity .55s ease}
+  .banner .art.show{opacity:1}
+  .banner .veil{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:
+      radial-gradient(ellipse at 50% 130%, rgba(120,20,10,.42) 0%, transparent 66%),
+      linear-gradient(180deg, rgba(10,9,8,.74) 0%, rgba(16,13,11,.52) 48%, rgba(10,9,8,.94) 100%);
+  }
+  .banner h1, .banner .sub{position:relative; z-index:3}
+
+  /* ---- top tabs ---- */
+  .tabs{
+    display:flex; border-bottom:1px solid #000;
+    background:linear-gradient(180deg,#0b0908,#141110);
+    box-shadow:inset 0 -1px 0 #2b241c;
+  }
+  .tabs a{
+    flex:1 1 0; text-align:center; text-decoration:none;
+    padding:11px 6px 10px;
+    font-family:"Arial Black",Arial,sans-serif; font-size:9.5px; letter-spacing:3px;
+    color:#6f6558; border-right:1px solid #000;
+    background:linear-gradient(180deg,#161210,#0e0c0a);
+    box-shadow:inset 0 1px 0 #29221a;
+    text-shadow:0 1px 0 #000;
+    transition:color .2s ease, background .25s ease, box-shadow .25s ease;
+  }
+  .tabs a:last-child{border-right:none}
+  .tabs a:hover{color:#c3b7a2; background:linear-gradient(180deg,#221a14,#140f0c)}
+  .tabs a.on{
+    color:#e6dccb;
+    background:linear-gradient(180deg,#2a1c15 0%,#1a110d 60%,#2a0f08 100%);
+    box-shadow:inset 0 1px 0 rgba(255,190,150,.14), inset 0 -3px 0 var(--blood);
+  }
+  .tabs a.on:hover{color:#fff3e0}
+
+  /* ---- secondary strip ---- */
+  .subtabs{
+    display:flex; border-bottom:1px solid #000;
+    background:linear-gradient(180deg,#100d0b,#0a0908);
+  }
+  .subtabs a{
+    flex:1 1 0; text-align:center; text-decoration:none;
+    padding:8px 6px 7px;
+    font-family:Verdana,Arial,sans-serif; font-size:9.5px; letter-spacing:2px;
+    text-transform:uppercase; color:#5f564a;
+    border-right:1px solid #000; background:#0d0b09;
+    transition:color .2s ease, background .2s ease, box-shadow .25s ease;
+  }
+  .subtabs a:last-child{border-right:none}
+  .subtabs a:hover{color:#a2937d; background:#141110}
+  .subtabs a.on{color:#c3b7a2; background:#161210; box-shadow:inset 0 -2px 0 var(--rust)}
+
+  @media(max-width:640px){
+    .tabs, .subtabs{flex-wrap:wrap}
+    .tabs a, .subtabs a{flex:1 1 50%; border-bottom:1px solid #000}
+  }
+
+  /* ---- foldable sections ---- */
+  details.fold{
+    border:1px solid #000; background:var(--panel2); margin:10px 0;
+    box-shadow:inset 0 0 0 1px #2b241c, 0 2px 10px rgba(0,0,0,.6);
+    transition:box-shadow .25s ease;
+  }
+  details.fold[open]{box-shadow:inset 0 0 0 1px #3a2f24, 0 4px 18px rgba(0,0,0,.75)}
+  details.fold>summary{
+    list-style:none; cursor:pointer; user-select:none;
+    display:flex; align-items:center;
+    background:linear-gradient(180deg,#241a14,#150f0b);
+    color:#c3b7a2; padding:9px 12px; border-bottom:1px solid transparent;
+    font-family:"Arial Black",Arial,sans-serif; font-size:10.5px; letter-spacing:3px;
+    box-shadow:inset 0 1px 0 #33291f;
+    transition:color .2s ease, background .25s ease;
+  }
+  details.fold>summary::-webkit-details-marker{display:none}
+  details.fold>summary::marker{content:""}
+  details.fold>summary:before{
+    content:"+";
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    width:20px; height:16px; margin-right:11px;
+    font-family:"Courier New",Courier,monospace; font-size:14px; font-weight:bold;
+    letter-spacing:0; line-height:1;
+    background:linear-gradient(180deg,var(--blood),var(--blood2));
+    color:#e8ddc9; border:1px solid #000; text-shadow:0 1px 0 #000;
+    box-shadow:inset 0 1px 0 rgba(255,120,90,.28);
+    transition:transform .25s ease;
+  }
+  details.fold[open]>summary:before{content:"\2212"; transform:rotate(180deg)}
+  details.fold>summary:hover{color:#e6dccb; background:linear-gradient(180deg,#2c211a,#1a1210)}
+  details.fold[open]>summary{border-bottom:1px solid #000}
+  details.fold .bd{padding:12px 14px; animation:unfold .3s ease both}
+
+  /* ---- motion ---- */
+  @keyframes fadeIn{from{opacity:0} to{opacity:1}}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(9px)} to{opacity:1; transform:none}}
+  @keyframes unfold{from{opacity:0; transform:translateY(-5px)} to{opacity:1; transform:none}}
+
+  .plate{animation:fadeIn .45s ease both}
+  .banner h1{animation:fadeUp .55s .04s ease both}
+  .banner .sub{animation:fadeUp .55s .16s ease both}
+
+  .sec{display:none}
+  .sec.on{display:block; animation:fadeUp .32s ease both}
+
+  .step{transition:box-shadow .25s ease, transform .25s ease}
+  .step:hover{box-shadow:inset 0 0 0 1px #3a2f24, 0 4px 16px rgba(0,0,0,.75)}
+
+  a{transition:color .18s ease}
+  .dlbox a.dl{transition:color .2s ease, background .3s ease, box-shadow .3s ease}
+  table.data tr{transition:background .2s ease}
+  table.data tr:hover td{background:#1d1815}
+
+  /* scroll reveal */
+  .rv{opacity:0; transform:translateY(12px)}
+  .rv.seen{animation:fadeUp .45s ease both}
+
+  @media(prefers-reduced-motion:reduce){
+    *, *:before, *:after{animation:none !important; transition:none !important}
+    .rv{opacity:1; transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+<div class="plate">
+  <div class="banner">
+    <div class="poster" style="background-image:url(&quot;img/b_index.jpg&quot;)"></div>
+    <div class="art show" style="background-image:url(&quot;img/g_index.gif&quot;)"></div>
+    <div class="veil"></div>
+    <h1>CROW'S QUAKE III ARENA</h1>
+    <div class="sub"><b>&#10013;</b> ALL WELCOME <b>&#10013;</b></div>
+  </div>
+  <div class="tabs">
+    <a href="index.html" class="on">JOIN THE SERVER</a>
+    <a href="dev.html">DEVELOPER</a>
+  </div>
+<div class="inner">
+
+    <p>Everything you need is in one download. The game, the engine, the mod, the
+    settings, all bolted together and ready to run. No installer. No configuring.
+    Nothing to look up. Unzip it and play.</p>
+
+    <div class="dlbox">
+      <a class="dl" href="https://drive.google.com/file/d/1uoCkq0dZvsoVkxrqaz6IIdRmsMOS3DoH/view?usp=sharing">DOWNLOAD THE PACK</a>
+      <div class="sz">COMPLETE WORKING CLIENT &#10013; APPROX. 500 MB</div>
+    </div>
+
+    <h2><span class="mk">&#9642;</span>THE INSTRUCTIONS</h2>
+    <div class="rule"></div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">1</span>DOWNLOAD AND UNZIP</div>
+      <div class="bd">
+        <p>Hit the button above and unzip it anywhere you like. Desktop, Documents, a
+        games drive, it does not matter. Nothing gets installed and nothing else on your
+        PC gets touched.</p>
+        <p class="small">Google Drive will say it cannot scan a file this big. That is
+        just its size limit talking, not a verdict on the file.</p>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">2</span>RUN IT</div>
+      <div class="bd">
+        <p>Open the folder and run:</p>
+        <pre>ioquake3.x86_64.exe</pre>
+        <p>Windows will probably throw up a blue <b class="hot">"Windows protected your
+        PC"</b> box, because the file came off the internet and is not signed. Click
+        <b>More info</b>, then <b>Run anyway</b>.</p>
+      </div>
+    </div>
+
+    <div class="step rv">
+      <div class="hd"><span class="n">3</span>CONNECT</div>
+      <div class="bd">
+        <p>Press <code>~</code> to open the console. That is the key left of the
+        <code>1</code>, above Tab. Type <code>connect</code> and then the address:</p>
+
+        <div class="addrbox">
+          <div class="lbl">SERVER ADDRESS</div>
+          <div class="ip">irvine-worried.tun.ply.gg:46308</div>
+        </div>
+
+        <p>If <code>~</code> does nothing on your keyboard, which is common outside the
+        US, forget the console. Go to <b>Multiplayer &#8594; Specify</b> in the menus and
+        type the address there instead.</p>
+        <p class="small">That is it. Everything else is already set up inside the pack.</p>
+      </div>
+    </div>
+
+    <h2><span class="mk">&#9642;</span>ONE THING TO KNOW</h2>
+    <div class="rule"></div>
+    <p><b class="hot">YOUR MIDDLE MOUSE BUTTON IS A GRAPPLING HOOK.</b> Hold it down to
+    fire, and it reels you in. It is switched on in nearly every mode on this server and
+    it is the main thing that makes this place feel different from normal Quake.
+    Use it constantly.</p>
+
+
+    <h2><span class="mk">&#9642;</span>MAKE IT YOURS</h2>
+    <div class="rule"></div>
+    <p class="small">All optional.</p>
+
+    <details class="fold">
+      <summary>YOUR NAME, AND COLOURING IT</summary>
+      <div class="bd">
+        <p>Set it in <b>Setup &#8594; Player</b>, or from the console at any time, even mid
+        match:</p>
+
+        <pre>/name Crow</pre>
+
+        <p>Quake 3 colours text with a caret followed by a digit. Everything after it takes
+        that colour until the next code:</p>
+
+        <pre>/name ^1Crow
+/name ^1C^7row
+/name ^4x^5X^4x</pre>
+
+        <table class="data">
+          <tr><th width="14%">CODE</th><th width="22%">COLOUR</th><th>LOOKS LIKE</th></tr>
+          <tr><td>^0</td><td>Black</td>
+              <td><span style="display:block;height:14px;background:#000;box-shadow:inset 0 0 0 1px #4a4238"></span></td></tr>
+          <tr><td>^1</td><td>Red</td>
+              <td><span style="display:block;height:14px;background:#ff0000;box-shadow:inset 0 0 0 1px #000"></span></td></tr>
+          <tr><td>^2</td><td>Green</td>
+              <td><span style="display:block;height:14px;background:#00ff00;box-shadow:inset 0 0 0 1px #000"></span></td></tr>
+          <tr><td>^3</td><td>Yellow</td>
+              <td><span style="display:block;height:14px;background:#ffff00;box-shadow:inset 0 0 0 1px #000"></span></td></tr>
+          <tr><td>^4</td><td>Blue</td>
+              <td><span style="display:block;height:14px;background:#0000ff;box-shadow:inset 0 0 0 1px #000"></span></td></tr>
+          <tr><td>^5</td><td>Cyan</td>
+              <td><span style="display:block;height:14px;background:#00ffff;box-shadow:inset 0 0 0 1px #000"></span></td></tr>
+          <tr><td>^6</td><td>Magenta</td>
+              <td><span style="display:block;height:14px;background:#ff00ff;box-shadow:inset 0 0 0 1px #000"></span></td></tr>
+          <tr><td>^7</td><td>White</td>
+              <td><span style="display:block;height:14px;background:#ffffff;box-shadow:inset 0 0 0 1px #000"></span></td></tr>
+        </table>
+
+        <p>That is the whole palette. There is no <code>^8</code> or <code>^9</code>, and if
+        you type one it shows up as literal text on the scoreboard.</p>
+
+        <p><b class="hot">If the caret will not type</b>, which is normal on Spanish and
+        other Latin American layouts, it is a dead key waiting for a vowel. Press it and then
+        press <b>space</b> and you get a bare <code>^</code>. Two presses in a row also works
+        on some layouts.</p>
+
+        <p class="small">Colour codes count towards the length limit even though they are
+        invisible, so a heavily coloured name has to be short.</p>
+      </div>
+    </details>
+
+    <details class="fold">
+      <summary>PICKING A CHARACTER</summary>
+      <div class="bd">
+        <p><b>Setup &#8594; Player</b> has a portrait you can click through. From the console
+        it is two commands, because the head is separate from the body:</p>
+
+        <pre>/model sarge
+/headmodel sarge</pre>
+
+        <p>The 23 characters that come with the game:</p>
+        <p class="small"><code>anarki biker bitterman bones crash doom grunt hunter keel
+        klesk lucy major mynx orbb ranger razor sarge slash sorlag tankjr uriel visor
+        xaero</code></p>
+
+        <p>This server also carries a team colour skin pack, so every one of those comes in
+        seven colours. Add the colour after a slash:</p>
+
+        <pre>/model bones/black
+/headmodel bones/black</pre>
+
+        <p class="small">Colours: <code>aqua black green orange pink white yellow</code>. You
+        do not need to download anything, it arrives when you connect.</p>
+
+        <p>If somebody shows up as a plain default character, their game does not have that
+        skin yet. It sorts itself out on their next connect.</p>
+      </div>
+    </details>
+
+    <details class="fold">
+      <summary>CHAT, TAUNTS AND THE SCOREBOARD</summary>
+      <div class="bd">
+        <table class="data">
+          <tr><th width="30%">KEY</th><th>WHAT IT DOES</th></tr>
+          <tr><td>T</td><td>Chat to everybody.</td></tr>
+          <tr><td>Y</td><td>Chat to your team only.</td></tr>
+          <tr><td>TAB</td><td>Scoreboard. Hold it down.</td></tr>
+          <tr><td>ESC</td><td>Menu, and how you leave spectator mode.</td></tr>
+        </table>
+
+        <p>Colour codes work in chat too, exactly the same way:</p>
+        <pre>^1hello ^7everyone</pre>
+
+        <p>For the taunt animation, bind it to something:</p>
+        <pre>/bind MOUSE4 "+button3"</pre>
+
+        <p>The bots here react to what you type. They are not clever, they are matching
+        words, but they will answer a greeting, complain about lag with you, and get
+        defensive if you accuse them of camping. Ask one whether it is a bot.</p>
+      </div>
+    </details>
+
+    <details class="fold">
+      <summary>SETTINGS WORTH CHANGING</summary>
+      <div class="bd">
+        <p>None of this is required. Type them into the console, or put them in your config
+        so they stick.</p>
+        <table class="data">
+          <tr><th width="42%">COMMAND</th><th>WHAT IT DOES</th></tr>
+          <tr><td>/cg_fov 110</td><td>Field of view. The default 90 is narrow and makes
+          people circling you vanish off the edge of the screen. Most players use 100 to
+          120.</td></tr>
+          <tr><td>/com_maxfps 125</td><td>Frame cap. 125 is traditional because of how Quake 3
+          handles jump physics at certain frame rates.</td></tr>
+          <tr><td>/cg_drawfps 1</td><td>Frame rate in the corner.</td></tr>
+          <tr><td>/cg_lagometer 1</td><td>A small graph showing whether stutter is your
+          connection or your computer.</td></tr>
+          <tr><td>/sensitivity 5</td><td>Mouse speed. Lower than you expect if you have come
+          from a modern shooter.</td></tr>
+          <tr><td>/rate 25000<br>/snaps 40<br>/cl_maxpackets 100</td>
+              <td>Network settings. The defaults are tuned for 1999 modems and hold you back
+              on anything since.</td></tr>
+          <tr><td>/cg_drawgun 0</td><td>Hide the weapon model for a clearer view.</td></tr>
+          <tr><td>/bind F12 screenshotJPEG</td><td>A screenshot key. They land in the game
+          folder under screenshots.</td></tr>
+          <tr><td>/team spectator<br>/team free</td><td>Sit out and watch, then rejoin.</td></tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="fold">
+      <summary>CHANGING THE MAP AND THE RULES</summary>
+      <div class="bd">
+        <p>You do not need an admin. Anyone can call a vote, everyone else presses F1 for yes
+        or F2 for no:</p>
+
+        <pre>/callvote map q3dm6
+/callvote timelimit 15
+/callvote restart</pre>
+
+        <p>You can also vote for a completely different set of weapon rules. The gameplay
+        changes instantly, with no map change and nothing to reconnect:</p>
+
+        <pre>/callvote config instagib</pre>
+
+        <p class="small">Try <code>chaos</code>, <code>sumo</code> and <code>zerog</code> as
+        well. Each is worth seeing at least once.</p>
+      </div>
+    </details>
+
+    <h2><span class="mk">&#9642;</span>IF SOMETHING GOES WRONG</h2>
+    <div class="rule"></div>
+
+    <details class="fold">
+      <summary>COMMON PROBLEMS, AND WHAT TO DO</summary>
+      <div class="bd">
+        <table class="data">
+          <tr><th width="34%">PROBLEM</th><th>WHAT TO DO</th></tr>
+          <tr>
+            <td>"Windows protected<br>your PC"</td>
+            <td>Expected. The file is unsigned and came off the internet.
+            <b>More info</b>, then <b>Run anyway</b>.</td>
+          </tr>
+          <tr>
+            <td>Antivirus complains</td>
+            <td>Also expected. An unsigned 1999 game executable is exactly the shape of thing
+            that trips heuristics. Allow it, or add the folder as an exception.</td>
+          </tr>
+          <tr>
+            <td>Stuck on<br>"Awaiting challenge"</td>
+            <td>Nothing is answering back. Nearly always the address or port typed wrong.
+            Check it character by character.</td>
+          </tr>
+          <tr>
+            <td>The <code>~</code> key does<br>not open the console</td>
+            <td>Common on non US layouts. Use <b>Multiplayer &#8594; Specify</b> from the
+            menus instead. No console needed.</td>
+          </tr>
+          <tr>
+            <td>Cannot find the<br>server address</td>
+            <td>Check it character by character. If it still will not connect, the server is
+            probably switched off. Ask Crow.</td>
+          </tr>
+        </table>
+
+        <p class="small" style="margin-top:16px">Still stuck? Send Crow the <b>exact
+        wording</b> of the error. Quake 3's messages look like nonsense but they are very
+        specific, and the precise text usually gives the problem away immediately.</p>
+      </div>
+    </details>
+
+  </div>
+
+
+
+  <div class="footer">
+    <span class="skull">&#10013;</span> &nbsp; SEE YOU IN THE ARENA &nbsp;
+    <span class="skull">&#10013;</span>
+    <br><br>
+    <span class="counter">00013370</span><br>
+    <span style="font-size:9px">VISITORS SINCE 2026</span>
+    <br><br>
+    BEST VIEWED AT 1024x768 &nbsp;|&nbsp; LAST UPDATED 20.08.2026
+    <br>
+    <span style="color:#3d362d">CROW'S SERVER &#10013; NO CHEATS &#10013; NO MERCY</span>
+  </div>
+</div>
+</div>
+<script>
+(function(){
+  var reveal = function(){
+    if(!('IntersectionObserver' in window)){
+      [].forEach.call(document.querySelectorAll('.rv'), function(e){e.classList.add('seen')});
+      return null;
+    }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('seen'); io.unobserve(en.target); }
+      });
+    }, {rootMargin:'0px 0px -40px 0px'});
+    return io;
+  };
+  var io = reveal();
+  window.__arm = function(root){
+    if(!io) return;
+    [].forEach.call((root||document).querySelectorAll('.rv:not(.seen)'), function(e){io.observe(e)});
+  };
+  window.__arm(document);
+})();
+</script>
+</body>
+</html>
