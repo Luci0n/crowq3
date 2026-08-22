@@ -208,6 +208,11 @@
     animation:beat 2.6s ease-in-out infinite;
   }
   .rack.off .dot{ background:var(--blood); box-shadow:0 0 0 1px #000, 0 0 10px rgba(138,30,18,.9); }
+  .rack.stale .dot{
+    background:#b8863a; box-shadow:0 0 0 1px #000, 0 0 10px rgba(184,134,58,.85);
+    animation:none;
+  }
+  .rack.stale .rack-state{ color:#c09a55; }
   @keyframes beat{ 0%,100%{opacity:1} 50%{opacity:.42} }
   @media (prefers-reduced-motion:reduce){ .rack.on .dot{animation:none} }
 
@@ -885,6 +890,12 @@
   var EVERY = 15000;
   var CLIP = 'img/g_overview.gif';
 
+  /* Quake name colours, pulled toward this page's palette so they stay
+     readable on a near-black background. ^0 is black in game, which would be
+     invisible here, so it maps to the muted grey the rest of the page uses. */
+  var Q3C = ['#6f6558','#d2402c','#7fb03a','#d9c04a',
+             '#4a6fd0','#4fc3c9','#c060c0','#d5c9b4'];
+
   var box = document.getElementById('live');
   if(!box) return;
 
@@ -895,6 +906,7 @@
   });
 
   var lastOk = 0;
+  var heldFor = 0;
 
   /* The still is already painted by CSS. Swap the clip in only once it has
      actually downloaded, so nobody ever looks at an empty box. Same approach
@@ -913,6 +925,30 @@
     return String(t).replace(/[&<>"]/g, function(c){
       return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
     });
+  }
+
+  /* Render ^N colour codes. Every literal run is escaped before it goes near
+     innerHTML - these names come off a public game server. */
+  function colorName(raw, fallback){
+    if(!raw) return esc(fallback || '');
+    var out = '', run = '', cur = null, i = 0;
+    function flush(){
+      if(!run) return;
+      out += cur ? '<span style="color:' + cur + '">' + esc(run) + '</span>' : esc(run);
+      run = '';
+    }
+    while(i < raw.length){
+      if(raw.charAt(i) === '^' && i + 1 < raw.length && /[0-9]/.test(raw.charAt(i + 1))){
+        flush();
+        cur = Q3C[parseInt(raw.charAt(i + 1), 10) % 8];
+        i += 2;
+        continue;
+      }
+      run += raw.charAt(i);
+      i++;
+    }
+    flush();
+    return out || esc(fallback || '');
   }
 
   function offline(msg){
@@ -943,8 +979,8 @@
   function render(d){
     if(!d || !d.online){ offline('NOT ANSWERING'); return; }
 
-    box.className = 'rack on';
-    el.liveState.textContent = 'ONLINE';
+    box.className = d.stale ? 'rack on stale' : 'rack on';
+    el.liveState.textContent = d.stale ? 'HOLDING' : 'ONLINE';
     el.liveHost.textContent = d.hostname || '';
     el.liveMap.textContent = d.map || '?';
     el.liveMode.textContent = (d.gametype || '').toUpperCase();
@@ -971,7 +1007,7 @@
       el.liveList.innerHTML = '<table><tr class="hdr">'
         + '<td class="pn">PLAYER</td><td class="sc">FRAGS</td><td class="pg">PING</td></tr>'
         + ps.map(function(p){
-        return '<tr><td class="pn">' + esc(p.name)
+        return '<tr><td class="pn">' + colorName(p.nameRaw, p.name)
           + (p.bot ? '<span class="tag">BOT</span>' : '')
           + '</td><td class="sc">' + esc(p.score)
           + '</td><td class="pg">' + (p.bot ? '' : esc(p.ping) + 'ms')
@@ -984,13 +1020,15 @@
     }
 
     lastOk = Date.now();
+    heldFor = d.stale ? (d.staleSeconds || 0) : 0;
   }
 
   /* a visible heartbeat - a slow-changing scoreboard otherwise looks frozen */
   function tick(){
     if(!lastOk){ el.liveTick.textContent = ''; return; }
     var s = Math.round((Date.now() - lastOk) / 1000);
-    el.liveTick.textContent = s < 2 ? 'JUST NOW' : s + 'S AGO';
+    el.liveTick.textContent = (s < 2 ? 'JUST NOW' : s + 'S AGO')
+      + (heldFor ? ' · HELD ' + heldFor + 'S' : '');
   }
 
   function poll(){
@@ -1001,8 +1039,25 @@
       .catch(function(){ offline('STATUS UNAVAILABLE'); });
   }
 
+  /* Don't poll a tab nobody is looking at. Refresh the moment it comes back,
+     so what you see on return is current rather than up to EVERY ms old. */
+  var timer = null;
+  function start(){
+    if(timer) return;
+    timer = setInterval(poll, EVERY);
+  }
+  function stop(){
+    if(!timer) return;
+    clearInterval(timer);
+    timer = null;
+  }
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ stop(); }
+    else { poll(); start(); }
+  });
+
   poll();
-  setInterval(poll, EVERY);
+  start();
   setInterval(tick, 1000);
 })();
 </script>
