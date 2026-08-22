@@ -496,7 +496,7 @@
     color:#c3b7a2; padding:9px 12px; border-bottom:1px solid transparent;
     font-family:"Arial Black",Arial,sans-serif; font-size:10.5px; letter-spacing:3px;
     box-shadow:inset 0 1px 0 #33291f;
-    transition:color .2s ease, background .25s ease;
+    transition:color .2s ease, background .25s ease, border-color .28s ease;
   }
   details.fold>summary::-webkit-details-marker{display:none}
   details.fold>summary::marker{content:""}
@@ -516,6 +516,22 @@
   details.fold>summary:hover{color:#e6dccb; background:linear-gradient(180deg,#2c211a,#1a1210)}
   details.fold[open]>summary{border-bottom:1px solid #000}
   details.fold .bd{padding:12px 14px; animation:unfold .3s ease both}
+
+  /* With script running we animate the height ourselves, so the keyframe is
+     dropped - it would fight the transition. Without script the <details>
+     still works and keeps the plain fade above. border-box matters: it lets
+     height:0 collapse the padding too, instead of leaving a 24px stub. */
+  details.fold.js > .bd{
+    box-sizing:border-box;
+    animation:none;
+    transition:height .28s cubic-bezier(.22,.61,.36,1),
+               padding-top .28s cubic-bezier(.22,.61,.36,1),
+               padding-bottom .28s cubic-bezier(.22,.61,.36,1),
+               opacity .22s ease;
+  }
+  @media (prefers-reduced-motion:reduce){
+    details.fold.js > .bd{ transition:none; }
+  }
 
   /* ---- motion ---- */
   @keyframes fadeIn{from{opacity:0} to{opacity:1}}
@@ -890,6 +906,96 @@
     [].forEach.call((root||document).querySelectorAll('.rv:not(.seen)'), function(e){io.observe(e)});
   };
   window.__arm(document);
+})();
+
+/* Smooth foldouts.
+ *
+ * <details> snaps: the box jumps to its full height the instant it opens, and
+ * everything below it jumps with it. Height cannot be transitioned from auto,
+ * so we measure the content and animate to an explicit pixel height, then hand
+ * the height back to the browser once the animation is done - otherwise the
+ * panel would stop reflowing if its contents ever changed.
+ *
+ * Closing has to happen in the other order: animate first, and only set
+ * open=false at the end, because a closed <details> does not render its
+ * contents and there would be nothing left to animate.
+ */
+(function(){
+  var folds = document.querySelectorAll('details.fold');
+  if(!folds.length) return;
+
+  var reduce = window.matchMedia
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var DUR = reduce ? 0 : 280;
+
+  function bodyOf(d){
+    for(var i = 0; i < d.children.length; i++){
+      if(d.children[i].className && d.children[i].className.indexOf('bd') > -1){
+        return d.children[i];
+      }
+    }
+    return null;
+  }
+
+  [].forEach.call(folds, function(d){
+    var body = bodyOf(d);
+    var summary = d.querySelector('summary');
+    if(!body || !summary) return;
+
+    d.className += ' js';
+
+    /* border-box height:0 still leaves the padding drawn, so the box would
+       drop the last 24px in one frame when open flips. Pad has to travel too. */
+    var PAD = '12px';
+
+    function settle(){
+      body.style.height = '';
+      body.style.overflow = '';
+      body.style.opacity = '';
+      body.style.paddingTop = '';
+      body.style.paddingBottom = '';
+      d.removeAttribute('data-anim');
+    }
+
+    summary.addEventListener('click', function(e){
+      e.preventDefault();
+      if(d.getAttribute('data-anim')) return;   // ignore clicks mid-flight
+      d.setAttribute('data-anim', '1');
+
+      if(d.open){
+        body.style.overflow = 'hidden';
+        body.style.height = body.scrollHeight + 'px';
+        body.style.paddingTop = PAD;
+        body.style.paddingBottom = PAD;
+        body.getBoundingClientRect();           // force the start value to stick
+        body.style.height = '0px';
+        body.style.paddingTop = '0px';
+        body.style.paddingBottom = '0px';
+        body.style.opacity = '0';
+        window.setTimeout(function(){
+          d.open = false;
+          settle();
+        }, DUR);
+      } else {
+        d.open = true;                          // must render before measuring
+        body.style.overflow = 'hidden';
+        body.style.height = '0px';
+        body.style.paddingTop = '0px';
+        body.style.paddingBottom = '0px';
+        body.style.opacity = '0';
+        body.getBoundingClientRect();
+        var full = body.scrollHeight;           // measured with padding at zero
+        body.style.paddingTop = PAD;
+        body.style.paddingBottom = PAD;
+        body.style.height = (full + 24) + 'px';
+        body.style.opacity = '1';
+        window.setTimeout(function(){
+          settle();
+          if(window.__arm) window.__arm(body);   // reveal anything inside
+        }, DUR);
+      }
+    });
+  });
 })();
 </script>
 <script>
