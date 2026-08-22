@@ -3,6 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A practical reference for running and modifying a Quake III Arena server, bots, commands, and Excessive Plus weapons.">
+<meta name="theme-color" content="#0a0908">
+<link rel="canonical" href="https://luci0n.github.io/crowq3/dev.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Crow's Quake III Developer Reference">
+<meta property="og:description" content="Console commands, bot configuration, and weapon configuration for Quake III Arena.">
+<meta property="og:url" content="https://luci0n.github.io/crowq3/dev.html">
+<meta property="og:image" content="https://luci0n.github.io/crowq3/img/b_dev.jpg">
 <title>:: QUAKE III ARENA :: DEVELOPER ::</title>
 <style>
   :root{
@@ -193,14 +202,22 @@
     background:linear-gradient(180deg,#0d0b09,#131110);
     box-shadow:inset 0 1px 0 #2b241c;
   }
-  .counter{
-    display:inline-block;background:#060505;border:1px solid #000;padding:4px 10px;
-    box-shadow:inset 0 0 0 1px #2b241c;
-    font-family:"Courier New",monospace;color:#8a7a62;letter-spacing:5px;font-size:13px;
-  }
   .skull{color:var(--blood2);font-size:13px}
 
   @media(max-width:800px){.page{width:auto}.banner h1{font-size:27px;letter-spacing:2px}}
+
+  @media(max-width:640px){
+    body{font-size:13px;line-height:1.65}
+    .inner{padding-left:16px;padding-right:16px}
+    .small{font-size:12px;color:#8f8577}
+    .banner .sub,.footer{font-size:11px}
+    .tabs a,.subtabs a,details.fold>summary{min-height:44px;box-sizing:border-box}
+    details.fold>summary{padding-top:11px;padding-bottom:11px}
+  }
+
+  @media(forced-colors:active){
+    .banner h1{background:none;color:CanvasText;-webkit-text-fill-color:CanvasText;filter:none}
+  }
 
   /* ---- warning callout ---- */
   .warn{
@@ -210,7 +227,7 @@
   }
   table.data td code{font-size:11px}
 
-  /* ---- bullets: a drawn square, so nothing has to be optically centred ---- */
+  /* ---- bullets: a drawn square, so nothing has to be optically centered ---- */
   ul{list-style:none; margin:10px 0; padding:0}
   ul li{position:relative; padding-left:24px; margin:6px 0}
   ul li:before{
@@ -354,24 +371,24 @@
 <body>
 <div class="page">
 <div class="plate">
-  <div class="banner">
+  <header class="banner">
     <div class="poster" id="poster"></div>
     <div class="art" id="art"></div>
     <div class="veil"></div>
     <h1>DEVELOPER</h1>
     <div class="sub" id="bsub" style="transition:opacity .18s ease">RUNNING AND MODIFYING A QUAKE III SERVER</div>
-  </div>
-  <div class="tabs">
+  </header>
+  <nav class="tabs" aria-label="Primary">
     <a href="index.html">JOIN THE SERVER</a>
-    <a href="dev.html" class="on">DEVELOPER</a>
-  </div>
-  <div class="subtabs">
-    <a href="#overview" data-sec="overview" class="on">Overview</a>
+    <a href="dev.html" class="on" aria-current="page">DEVELOPER</a>
+  </nav>
+  <nav class="subtabs" aria-label="Developer sections">
+    <a href="#overview" data-sec="overview" class="on" aria-current="page">Overview</a>
     <a href="#commands" data-sec="commands">Console &amp; Commands</a>
     <a href="#bots" data-sec="bots">Bots</a>
     <a href="#weapons" data-sec="weapons">Weapons</a>
-  </div>
-  <div class="inner">
+  </nav>
+  <main class="inner">
   <section class="sec on" id="overview">
 
 
@@ -524,7 +541,7 @@
       them.</td></tr>
       <tr><td>kick &lt;name&gt;</td><td>Remove a player by name.</td></tr>
       <tr><td>clientkick &lt;num&gt;</td><td>By client number. Safer, since names can contain
-      colour codes and spaces.</td></tr>
+      color codes and spaces.</td></tr>
       <tr><td>kick all<br>kick allbots</td><td>Everyone, or every bot.</td></tr>
       <tr><td>addbot &lt;name&gt; &lt;skill&gt;<br>&lt;team&gt; &lt;delay&gt;</td>
           <td>Add one bot. Skill 1 to 5, delay in milliseconds.
@@ -532,7 +549,7 @@
           module rather than the engine.</td></tr>
       <tr><td>say &lt;text&gt;<br>tell &lt;num&gt; &lt;text&gt;</td><td>Chat as the server, or
       to one player.</td></tr>
-      <tr><td>cp &lt;text&gt;</td><td>Print in the centre of everyone's screen.</td></tr>
+      <tr><td>cp &lt;text&gt;</td><td>Print in the center of everyone's screen.</td></tr>
       <tr><td>quit</td><td>Shut the server down.</td></tr>
     </table>
 
@@ -657,7 +674,7 @@ bind F5 "vstr fovtoggle"</pre>
       equipment.</td></tr>
       <tr><td>noclip</td><td>Fly through walls.</td></tr>
       <tr><td>god<br>notarget</td><td>Invulnerable, or invisible to bots. <code>notarget</code>
-      is the one for watching bot behaviour without being attacked.</td></tr>
+      is the one for watching bot behavior without being attacked.</td></tr>
       <tr><td>viewpos</td><td>Print your exact position and facing angle. This is how you get
       coordinates for placing anything in a map.</td></tr>
       <tr><td>r_showtris 1<br>r_speeds 1</td><td>Wireframe and rendering statistics.</td></tr>
@@ -759,12 +776,12 @@ bind F5 "vstr fovtoggle"</pre>
 
     <pre>{
 name    Wraith                           // what you type after addbot
-funname ^0W^0r^0a^0i^0t^0h               // scoreboard name, colour codes ^0 to ^7
+funname ^0W^0r^0a^0i^0t^0h               // scoreboard name, color codes ^0 to ^7
 model   bones/black                      // model/skin, head follows automatically
 aifile  bots/wraith_c.c                  // the personality file
 }</pre>
 
-    <p>Colour codes run <code>^0</code> to <code>^7</code> only: black, red, green, yellow,
+    <p>Color codes run <code>^0</code> to <code>^7</code> only: black, red, green, yellow,
     blue, cyan, magenta, white. <code>^8</code> and <code>^9</code> do not exist and print as
     literal text on the scoreboard.</p>
 
@@ -1118,7 +1135,7 @@ Rocket Launcher {
       <tr><td>Range</td><td>Lightning Gun reach.</td></tr>
       <tr><td>Max Hits</td><td>Railgun penetration, meaning how many people one slug passes
       through.</td></tr>
-      <tr><td>Bounce<br>Gravity<br>Time to Live</td><td>Projectile behaviour. Bouncing
+      <tr><td>Bounce<br>Gravity<br>Time to Live</td><td>Projectile behavior. Bouncing
       rockets, plasma that falls, grenades that never expire.</td></tr>
       <tr><td>Regen</td><td>Ammo regenerates over time.</td></tr>
       <tr><td>Ammo<br>Ammo Limit</td><td>Starting count and cap.</td></tr>
@@ -1139,7 +1156,7 @@ Rocket Launcher {
     being rationed by ammo, which changes how people move around a map far more than damage
     numbers do. <code>Firing Weight</code> applies only during the shot.</p>
 
-    <h2><span class="mk">&#9642;</span>STYLES, LOOKS AND BEHAVIOUR</h2>
+    <h2><span class="mk">&#9642;</span>STYLES, LOOKS AND BEHAVIOR</h2>
     <div class="rule"></div>
 
     <p><code>Style</code> is a bitmask, combined with <code>|</code>. Some flags are purely
@@ -1157,7 +1174,7 @@ Rocket Launcher {
       <tr><td>WPS_GRENADE_STICKY</td><td>Grenades stick where they land, so mines.</td></tr>
       <tr><td>WPS_PLASMA_SPLIT</td><td>Three plasma streams instead of one.</td></tr>
       <tr><td>WPS_GRAPPLE_ROPE</td><td>Swing on the hook instead of being reeled in.</td></tr>
-      <tr><td>WPS_BFG_PANTS<br>WPS_BFG_SOD</td><td>Two alternative BFG behaviours carried over
+      <tr><td>WPS_BFG_PANTS<br>WPS_BFG_SOD</td><td>Two alternative BFG behaviors carried over
       from older mods.</td></tr>
       <tr><td>Style = no;</td><td>No effect at all. An invisible weapon.</td></tr>
     </table>
@@ -1234,7 +1251,7 @@ Rocket Launcher {
     Start Weapons = WP_RAILGUN | WP_GAUNTLET;
     Start Weapon  = WP_RAILGUN;
     Weapons = WP_NONE;          // no guns lying around
-    Items   = IT_NONE;          // no armour, no health
+    Items   = IT_NONE;          // no armor, no health
     DM Flags = DM_INFINITE_AMMO;
 }
 
@@ -1301,7 +1318,7 @@ Rocket Launcher {
     <div class="rule"></div>
 
     <div class="step rv">
-      <div class="hd"><span class="n">1</span>START FROM A NEIGHBOUR</div>
+      <div class="hd"><span class="n">1</span>START FROM A NEIGHBOR</div>
       <div class="bd"><p>Copy whichever config is closest to what you want into
       <code>conf\yourname.cfg</code>. Do not start from <code>default.cfg</code>, which is
       1300 lines when you only need the differences.</p></div>
@@ -1354,19 +1371,29 @@ Rocket Launcher {
 
   
   </section>
-  </div>
+  </main>
 
-  <div class="footer">
+  <footer class="footer">
     <span class="skull">&#10013;</span> &nbsp; CONFIGURATION ALL THE WAY DOWN &nbsp;
     <span class="skull">&#10013;</span>
     <br><br>
-    BEST VIEWED AT 1024x768 &nbsp;|&nbsp; LAST UPDATED 21.08.2026
+    BUILT FOR DESKTOP + MOBILE &nbsp;|&nbsp; UPDATED <time id="lastUpdated" datetime="2026-08-22">AUGUST 22, 2026</time>
     <br>
     <span style="color:#3d362d">QUAKE III ARENA &#10013; DEVELOPER</span>
-  </div>
+  </footer>
 
 </div>
 </div>
+<script>
+/* Use the deployed file timestamp so this never becomes stale after a release. */
+(function(){
+  var time = document.getElementById('lastUpdated');
+  var date = new Date(document.lastModified);
+  if(!time || isNaN(date.getTime())) return;
+  time.dateTime = date.toISOString().slice(0,10);
+  time.textContent = date.toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'}).toUpperCase();
+})();
+</script>
 <script>
 (function(){
   var reveal = function(){
@@ -1417,7 +1444,12 @@ Rocket Launcher {
 
   function show(id, push){
     if(!ART[id]) id = 'overview';
-    links.forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-sec') === id); });
+    links.forEach(function(a){
+      var active = a.getAttribute('data-sec') === id;
+      a.classList.toggle('on', active);
+      if(active) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
     secs.forEach(function(s){ s.classList.toggle('on', s.id === id); });
 
     // still first, animation over it once it has actually downloaded

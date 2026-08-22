@@ -52,7 +52,7 @@ stays fixed while the page scrolls.
 
 The gifs began as clips from the game's own `gifs` folder, at one to five
 megabytes each. Cutting them to a strip, dropping them to eight or ten frames a
-second, desaturating, darkening and reducing them to 48 or 64 colours brought
+second, desaturating, darkening and reducing them to 48 or 64 colors brought
 them to between 200 and 560 KB. They are meant to read as texture behind a
 title rather than as footage, so the aggressive treatment costs nothing.
 
