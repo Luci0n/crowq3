@@ -169,8 +169,6 @@
     box-shadow:inset 0 0 0 1px #6b4a33, 0 0 40px rgba(150,30,12,.65);
   }
   .dlbox .sz{color:var(--dim);font-size:9.5px;margin-top:12px;letter-spacing:3px}
-  .dlbox .trust{max-width:620px;margin:12px auto 0;color:#8f8577;font-size:11px;letter-spacing:0;line-height:1.55}
-  .dlbox .trust code{font-size:10.5px;overflow-wrap:anywhere}
 
   /* ---- address ---- */
   .addrbox{
@@ -185,7 +183,7 @@
     margin-top:7px; letter-spacing:1px;
   }
   .copy-address{
-    min-height:44px; margin-top:12px; padding:8px 14px; cursor:pointer;
+    display:block; min-height:44px; margin:12px auto 0; padding:8px 14px; cursor:pointer;
     border:1px solid #000; color:#c3b7a2; background:linear-gradient(180deg,#241a14,#150f0b);
     box-shadow:inset 0 0 0 1px #3a2f24; font-family:"Arial Black",Arial,sans-serif;
     font-size:9px; letter-spacing:2px;
@@ -453,7 +451,7 @@
   @media(max-width:640px){
     body{font-size:13px;line-height:1.65}
     .inner{padding-left:16px;padding-right:16px}
-    .small,.dlbox .trust{font-size:12px;color:#8f8577}
+    .small{font-size:12px;color:#8f8577}
     .dlbox .sz,.banner .sub,.addrbox .lbl,.footer{font-size:11px}
     .tabs a,details.fold>summary{min-height:44px;box-sizing:border-box}
     details.fold>summary{padding-top:11px;padding-bottom:11px}
@@ -656,9 +654,6 @@
       <a class="dl" href="https://146-181-50-29.sslip.io/pack/quake3-pack.zip">DOWNLOAD THE PACK</a>
       <div class="sz">COMPLETE WORKING CLIENT &#10013; 499.2 MB / 476.1 MIB</div>
       <div class="sz">USERNAME: PLAYER &#10013; ASK CROW FOR THE PASSWORD</div>
-      <p class="trust">For people who already own Quake III Arena. Verify the download:<br>
-        <code>SHA-256 2f96e6548b519e51d301ebe19264c13d762dfc9eb2474d859e6909061e2bcf9c</code>
-      </p>
     </div>
 
     <h2><span class="mk">&#9642;</span>THE INSTRUCTIONS</h2>
@@ -681,8 +676,8 @@
         <p>Open the folder and run:</p>
         <pre>ioquake3.x86_64.exe</pre>
         <p>Windows may show a blue <b class="hot">"Windows protected your PC"</b> box because
-        the executable is unsigned. Verify the archive checksum shown above first. If it
-        matches, click <b>More info</b>, then <b>Run anyway</b>.</p>
+        the executable is unsigned. If you got the pack from the button above, click
+        <b>More info</b>, then <b>Run anyway</b>.</p>
       </div>
     </div>
 
@@ -919,9 +914,9 @@
           </tr>
           <tr>
             <td>Antivirus complains</td>
-            <td>Do not disable protection or add a broad exception. Check the archive against
-            the SHA-256 value above. If it differs, delete it and tell Crow. If it matches,
-            review the alert details before allowing only this executable.</td>
+            <td>Do not disable protection or add a broad exception. Confirm that you used the
+            download button above, review the alert details, and ask Crow if you are unsure
+            before allowing only this executable.</td>
           </tr>
           <tr>
             <td>Stuck on<br>"Awaiting challenge"</td>
