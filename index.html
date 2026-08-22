@@ -284,6 +284,10 @@
     color:#a39684; font-size:10px; letter-spacing:2.5px; margin-top:4px;
     font-family:"Arial Black",Arial,sans-serif; text-shadow:0 1px 0 #000;
   }
+  /* The gametype alone is misleading here: "Free For All" hides whether that
+     is ordinary play or Instagib. The loaded config is the real answer. */
+  .rack-mode .cfg{ color:#c08a5e; }
+  .rack-mode .sep{ color:#5f564a; margin:0 6px; }
 
   /* ---- slots ---- */
   .rack-slots{ padding:9px 26px 11px; border-bottom:1px solid #000; background:#0c0a09; }
@@ -1084,7 +1088,7 @@
     el.liveState.textContent = 'OFFLINE';
     el.liveHost.textContent = '';
     el.liveMap.innerHTML = '&mdash;';
-    el.liveMode.textContent = '';
+    el.liveMode.innerHTML = '';
     el.liveShot.className = 'rack-shot';
     el.liveShot.style.backgroundImage = '';
     el.liveMeter.innerHTML = '';
@@ -1111,7 +1115,12 @@
     el.liveState.textContent = d.stale ? 'HOLDING' : 'ONLINE';
     el.liveHost.textContent = d.hostname || '';
     el.liveMap.textContent = d.map || '?';
-    el.liveMode.textContent = (d.gametype || '').toUpperCase();
+    var mode = esc((d.gametype || '').toUpperCase());
+    if(d.config){
+      mode += '<span class="sep">&middot;</span><span class="cfg">'
+        + esc(String(d.config).toUpperCase()) + '</span>';
+    }
+    el.liveMode.innerHTML = mode;
 
     /* The shot is published next to the JSON and carries its own version
        token, so it updates when the map changes without being re-fetched
