@@ -247,12 +247,20 @@
       linear-gradient(90deg, rgba(10,9,8,.88) 0%, rgba(10,9,8,.40) 60%, rgba(10,9,8,.26) 100%),
       linear-gradient(180deg, rgba(10,9,8,.52) 0%, rgba(16,13,11,.26) 46%, rgba(10,9,8,.72) 100%);
   }
-  /* Only the type is lifted above the veil. This must NOT be `.rack-now > *`
-     - that also matches the art layers and overrides their position:absolute,
-     collapsing them to zero height so nothing ever renders. */
-  .rack-now > .rack-k,
-  .rack-now > .rack-map,
-  .rack-now > .rack-mode{ position:relative; z-index:2; }
+  /* Only this wrapper is lifted above the veil. It must NOT be `.rack-now > *`
+     - that also matches the two art layers and overrides their
+     position:absolute, collapsing them to zero height so nothing renders. */
+  .rack-nowin{
+    position:relative; z-index:2; display:flex; gap:14px; align-items:center;
+  }
+  .rack-shot{
+    flex:0 0 auto; width:104px; height:78px; display:none;
+    background:#0a0807 center center / cover no-repeat;
+    border:1px solid #000;
+    box-shadow:inset 0 0 0 1px #3a3128, 0 2px 9px rgba(0,0,0,.85);
+  }
+  .rack-shot.has{ display:block; }
+  .rack-nowtext{ min-width:0; }
 
   .rack-k{
     color:var(--dim); font-size:8.5px; letter-spacing:3px;
@@ -586,9 +594,14 @@
           <div class="rack-now">
             <div class="rack-poster"></div>
             <div class="rack-art" id="liveArt"></div>
-            <span class="rack-k">NOW PLAYING</span>
-            <div class="rack-map" id="liveMap">&mdash;</div>
-            <div class="rack-mode" id="liveMode"></div>
+            <div class="rack-nowin">
+              <div class="rack-shot" id="liveShot"></div>
+              <div class="rack-nowtext">
+                <span class="rack-k">NOW PLAYING</span>
+                <div class="rack-map" id="liveMap">&mdash;</div>
+                <div class="rack-mode" id="liveMode"></div>
+              </div>
+            </div>
           </div>
 
           <div class="rack-slots">
@@ -867,7 +880,8 @@
  * touched - nobody should lose the join instructions to a broken widget.
  */
 (function(){
-  var ENDPOINT = 'https://146-181-50-29.sslip.io/status/status.json';
+  var BASE = 'https://146-181-50-29.sslip.io/status/';
+  var ENDPOINT = BASE + 'status.json';
   var EVERY = 15000;
   var CLIP = 'img/g_overview.gif';
 
@@ -876,7 +890,7 @@
 
   var el = {};
   ['liveState','liveHost','liveMap','liveMode','liveMeter','liveCount',
-   'liveList','liveFoot','liveTick','liveArt'].forEach(function(id){
+   'liveList','liveFoot','liveTick','liveArt','liveShot'].forEach(function(id){
     el[id] = document.getElementById(id);
   });
 
@@ -907,6 +921,8 @@
     el.liveHost.textContent = '';
     el.liveMap.innerHTML = '&mdash;';
     el.liveMode.textContent = '';
+    el.liveShot.className = 'rack-shot';
+    el.liveShot.style.backgroundImage = '';
     el.liveMeter.innerHTML = '';
     el.liveCount.innerHTML = '&mdash;';
     el.liveList.innerHTML = '';
@@ -932,6 +948,17 @@
     el.liveHost.textContent = d.hostname || '';
     el.liveMap.textContent = d.map || '?';
     el.liveMode.textContent = (d.gametype || '').toUpperCase();
+
+    /* The shot is published next to the JSON and carries its own version
+       token, so it updates when the map changes without being re-fetched
+       on every poll. Maps with no levelshot simply have no thumbnail. */
+    if(d.mapshot){
+      el.liveShot.style.backgroundImage = 'url("' + BASE + d.mapshot + '")';
+      el.liveShot.className = 'rack-shot has';
+    } else {
+      el.liveShot.className = 'rack-shot';
+      el.liveShot.style.backgroundImage = '';
+    }
 
     el.liveMeter.innerHTML = meter(d.maxPlayers, d.humans, d.bots);
     el.liveCount.innerHTML = '<b>' + esc(d.players) + '</b> / ' + esc(d.maxPlayers);
