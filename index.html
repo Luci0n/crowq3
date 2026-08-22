@@ -308,19 +308,38 @@
   .rack-list table{
     width:100%; border-collapse:collapse; font-size:11px; table-layout:fixed;
   }
+  /* The row carries the frag bar, so backgrounds live on tr and the cells
+     stay transparent. Zebra striping is gone: at these values it was a
+     three-point difference nobody could see. */
+  .rack-list tr{ background:#0a0807; }
   .rack-list td{
-    padding:4px 0; border-bottom:1px solid #15110e; color:#9a8f80; background:#0a0807;
+    padding:5px 0; border-bottom:1px solid #15110e; color:#9a8f80;
+    background:transparent;
   }
-  .rack-list tr:nth-child(odd) td{ background:#0d0b09; }
   .rack-list tr:last-child td{ border-bottom:none; }
+  .rack-list tr.bot{ opacity:.62; }          /* people are the signal */
+  .rack-list tr.lead td{ box-shadow:inset 2px 0 0 var(--blood); }
+  .rack-list tr.lead .sc{ color:#e8b98c; }
+
+  .rack-list .rk{
+    width:34px; padding-left:26px; color:#5c5348;
+    font-family:"Courier New",Courier,monospace; font-size:10px;
+  }
+  .rack-list tr.lead .rk{ color:#a4483a; }
+
+  /* ping is the number that decides whether joining is worth it */
+  .rack-list .pg.g{ color:#7fa34a; }
+  .rack-list .pg.a{ color:#b8863a; }
+  .rack-list .pg.r{ color:#b04a38; }
   .rack-list .pn{
-    color:#c6bba6; letter-spacing:.5px; padding-left:26px;
+    color:#c6bba6; letter-spacing:.5px;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
   }
+  .rack-list tr.hdr{ background:#0b0908; }
   .rack-list tr.hdr td{
     color:var(--dim); font-family:"Arial Black",Arial,sans-serif;
     font-size:8px; letter-spacing:2px; padding-top:6px; padding-bottom:6px;
-    background:#0b0908; border-bottom:1px solid #1c1712;
+    border-bottom:1px solid #1c1712;
   }
   .rack-list tr.hdr td.pn{ color:var(--dim); }
   .rack-list .tag{
@@ -1004,13 +1023,33 @@
       el.liveList.innerHTML = '';
       el.liveFoot.textContent = 'EMPTY';
     } else {
+      /* Bar width is relative to whoever is leading, so the scoreboard can be
+         read at a glance instead of by comparing numbers. Scores can be
+         negative in Quake, so clamp before dividing. */
+      var top = 0;
+      ps.forEach(function(p){ if(p.score > top) top = p.score; });
+
       el.liveList.innerHTML = '<table><tr class="hdr">'
-        + '<td class="pn">PLAYER</td><td class="sc">FRAGS</td><td class="pg">PING</td></tr>'
-        + ps.map(function(p){
-        return '<tr><td class="pn">' + colorName(p.nameRaw, p.name)
+        + '<td class="rk"></td><td class="pn">PLAYER</td>'
+        + '<td class="sc">FRAGS</td><td class="pg">PING</td></tr>'
+        + ps.map(function(p, i){
+        /* Bars stay inside the name column - running under the numbers made
+           them harder to read, and the bar is about relative standing, not
+           about decorating the whole row. */
+        var pct = top > 0 ? Math.max(0, p.score) / top * 72 : 0;
+        var bar = pct > 0
+          ? ' style="background:linear-gradient(90deg,rgba(138,30,18,.22) 0,'
+            + 'rgba(138,30,18,.22) ' + pct.toFixed(1) + '%,transparent ' + pct.toFixed(1) + '%)"'
+          : '';
+        var cls = (p.bot ? 'bot' : '') + (i === 0 && top > 0 ? ' lead' : '');
+        var band = p.ping < 60 ? 'g' : (p.ping < 130 ? 'a' : 'r');
+        return '<tr class="' + cls + '"' + bar + '>'
+          + '<td class="rk">' + (i + 1) + '</td>'
+          + '<td class="pn">' + colorName(p.nameRaw, p.name)
           + (p.bot ? '<span class="tag">BOT</span>' : '')
           + '</td><td class="sc">' + esc(p.score)
-          + '</td><td class="pg">' + (p.bot ? '' : esc(p.ping) + 'ms')
+          + '</td><td class="pg ' + (p.bot ? '' : band) + '">'
+          + (p.bot ? '' : esc(p.ping) + 'ms')
           + '</td></tr>';
       }).join('') + '</table>';
 
