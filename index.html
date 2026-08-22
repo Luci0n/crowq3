@@ -285,9 +285,33 @@
     font-family:"Arial Black",Arial,sans-serif; text-shadow:0 1px 0 #000;
   }
   /* The gametype alone is misleading here: "Free For All" hides whether that
-     is ordinary play or Instagib. The loaded config is the real answer. */
-  .rack-mode .cfg{ color:#c08a5e; }
-  .rack-mode .sep{ color:#5f564a; margin:0 6px; }
+     is ordinary play or Instagib. The loaded config is the real answer, so it
+     gets its own colour per config - the mode becomes recognisable before you
+     have read the word. Glow is currentColor, so each one lights its own way.
+     Every value clears 4.5:1 against the marquee. */
+  .rack-mode .cfg{
+    color:#e3b25a; font-weight:bold;
+    text-shadow:0 0 14px currentColor, 0 1px 0 #000, 0 0 3px #000;
+  }
+  .rack-mode .sep{ color:#5f564a; margin:0 7px; text-shadow:none; }
+
+  .rack-mode .cfg-chaos,
+  .rack-mode .cfg-instachaos{ color:#e072d8; }   /* violet - anything goes */
+  .rack-mode .cfg-instagib{   color:#63d6e8; }   /* rail cyan */
+  .rack-mode .cfg-hunted{     color:#e05c46; }   /* blood */
+  .rack-mode .cfg-l4d{        color:#8fc250; }   /* toxic */
+  .rack-mode .cfg-grapple{    color:#e3b25a; }   /* brass, the house default */
+  .rack-mode .cfg-zerog{      color:#8fb6ff; }   /* weightless blue */
+  .rack-mode .cfg-sumo{       color:#e8933c; }   /* shove orange */
+  .rack-mode .cfg-intercept{  color:#5fd3a8; }
+  .rack-mode .cfg-asymmetry{  color:#c8a2e0; }
+  .rack-mode .cfg-excessive1,
+  .rack-mode .cfg-excessive2,
+  .rack-mode .cfg-excessive3,
+  .rack-mode .cfg-excessive4,
+  .rack-mode .cfg-excessive5{ color:#e8724a; }   /* the excessive family */
+  .rack-mode .cfg-baseq3,
+  .rack-mode .cfg-default{    color:#c6bba6; }   /* stock, deliberately plain */
 
   /* ---- slots ---- */
   .rack-slots{ padding:9px 26px 11px; border-bottom:1px solid #000; background:#0c0a09; }
@@ -1117,7 +1141,14 @@
     el.liveMap.textContent = d.map || '?';
     var mode = esc((d.gametype || '').toUpperCase());
     if(d.config){
-      mode += '<span class="sep">&middot;</span><span class="cfg">'
+      /* Class comes from the config filename, stripped to characters that are
+         safe in an attribute - the value reaches the page from a game server. */
+      var stem = String(d.configFile || '')
+        .replace(/\.cfg$/i, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9_-]/g, '');
+      mode += '<span class="sep">&middot;</span><span class="cfg'
+        + (stem ? ' cfg-' + stem : '') + '">'
         + esc(String(d.config).toUpperCase()) + '</span>';
     }
     el.liveMode.innerHTML = mode;
