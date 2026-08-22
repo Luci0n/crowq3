@@ -174,6 +174,51 @@
   }
 
 
+  /* ---- live status ---- */
+  .livebox{
+    border:1px solid #000; background:#0c0a09; margin:16px 0;
+    box-shadow:inset 0 0 0 1px #33291f, inset 0 0 40px rgba(0,0,0,.85);
+  }
+  .livehead{
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+    padding:11px 14px; border-bottom:1px solid #241d16;
+    background:linear-gradient(180deg,#191410,#0f0c0a);
+  }
+  .dot{
+    width:8px; height:8px; border-radius:50%; background:var(--dim);
+    flex:0 0 auto; box-shadow:0 0 6px rgba(0,0,0,.9);
+  }
+  .livebox.on  .dot{ background:#6f9a3a; box-shadow:0 0 9px rgba(120,180,70,.85); }
+  .livebox.off .dot{ background:var(--blood); box-shadow:0 0 9px rgba(160,40,25,.8); }
+  .livestate{
+    font-family:"Arial Black",Arial,sans-serif; font-size:9.5px;
+    letter-spacing:2.5px; color:var(--dim);
+  }
+  .livebox.on  .livestate{ color:#94ad6b; }
+  .livebox.off .livestate{ color:#a4483a; }
+  .livehost{ color:var(--ash); font-size:11.5px; margin-left:auto; letter-spacing:.5px; }
+
+  .livegrid{ display:flex; flex-wrap:wrap; gap:1px; background:#241d16; }
+  .livecell{ flex:1 1 110px; background:#131010; padding:11px 14px; }
+  .livecell .k{ color:var(--dim); font-size:9px; letter-spacing:2.5px; display:block; }
+  .livecell .v{
+    color:#d3c7b0; font-size:15px; margin-top:5px; display:block;
+    font-family:"Courier New",Courier,monospace; letter-spacing:.5px;
+  }
+  .liveplayers{ padding:0 14px 4px; }
+  .liveplayers table{ width:100%; border-collapse:collapse; font-size:11px; }
+  .liveplayers td{ padding:5px 0; border-bottom:1px solid #1c1712; color:#9d9284; }
+  .liveplayers tr:last-child td{ border-bottom:none; }
+  .liveplayers .pn{ color:#c6bba6; }
+  .liveplayers .bot{ color:var(--dim); font-size:9px; letter-spacing:1.5px; }
+  .liveplayers .num{
+    text-align:right; font-family:"Courier New",Courier,monospace; color:#8a8073;
+    white-space:nowrap;
+  }
+  .livefoot{
+    padding:8px 14px 11px; color:var(--dim); font-size:9px; letter-spacing:1.5px;
+  }
+
   table.data{width:100%;border-collapse:collapse;margin:10px 0;font-size:11px}
   table.data th{
     background:linear-gradient(180deg,#241d16,#161210); color:#c3b7a2;
@@ -410,6 +455,21 @@
         <div class="addrbox">
           <div class="lbl">SERVER ADDRESS</div>
           <div class="ip">146.181.50.29:27960</div>
+        </div>
+
+        <div class="livebox" id="live">
+          <div class="livehead">
+            <span class="dot"></span>
+            <span class="livestate" id="liveState">CHECKING</span>
+            <span class="livehost" id="liveHost"></span>
+          </div>
+          <div class="livegrid">
+            <div class="livecell"><span class="k">MAP</span><span class="v" id="liveMap">&mdash;</span></div>
+            <div class="livecell"><span class="k">MODE</span><span class="v" id="liveMode">&mdash;</span></div>
+            <div class="livecell"><span class="k">PLAYERS</span><span class="v" id="livePlayers">&mdash;</span></div>
+          </div>
+          <div class="liveplayers" id="liveList"></div>
+          <div class="livefoot" id="liveFoot">&nbsp;</div>
         </div>
 
         <p>If <code>~</code> does nothing on your keyboard, which is common outside the
@@ -656,6 +716,93 @@
     [].forEach.call((root||document).querySelectorAll('.rv:not(.seen)'), function(e){io.observe(e)});
   };
   window.__arm(document);
+})();
+</script>
+<script>
+/* Live server status.
+ *
+ * Reads the JSON a small poller writes on the game box every 15 seconds.
+ * The endpoint must be https: this page is served over TLS by GitHub Pages,
+ * and a secure page is not allowed to fetch an http:// URL.
+ *
+ * Everything here fails quietly. If the box is off, the domain is down, or
+ * the fetch is blocked, the panel says so and the rest of the page is
+ * untouched - nobody should be unable to read the join instructions because
+ * a status widget broke.
+ */
+(function(){
+  var ENDPOINT = 'https://146-181-50-29.sslip.io/status/status.json';
+  var EVERY = 20000;
+
+  var box = document.getElementById('live');
+  if(!box) return;
+  var el = {
+    state: document.getElementById('liveState'),
+    host:  document.getElementById('liveHost'),
+    map:   document.getElementById('liveMap'),
+    mode:  document.getElementById('liveMode'),
+    count: document.getElementById('livePlayers'),
+    list:  document.getElementById('liveList'),
+    foot:  document.getElementById('liveFoot')
+  };
+
+  function esc(t){
+    return String(t).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+
+  function offline(msg){
+    box.className = 'livebox off';
+    el.state.textContent = 'OFFLINE';
+    el.host.textContent = '';
+    el.map.innerHTML = el.mode.innerHTML = el.count.innerHTML = '&mdash;';
+    el.list.innerHTML = '';
+    el.foot.textContent = msg || 'the server is not answering';
+  }
+
+  function render(d){
+    if(!d || !d.online){ offline('the server is not answering'); return; }
+
+    box.className = 'livebox on';
+    el.state.textContent = 'ONLINE';
+    el.host.textContent = d.hostname || '';
+    el.map.textContent = d.map || '?';
+    el.mode.textContent = d.gametype || '?';
+    el.count.textContent = d.players + ' / ' + d.maxPlayers;
+
+    var ps = d.playerList || [];
+    if(!ps.length){
+      el.list.innerHTML = '';
+      el.foot.textContent = 'nobody is playing right now';
+      return;
+    }
+
+    var rows = ps.map(function(p){
+      return '<tr>'
+        + '<td class="pn">' + esc(p.name)
+        + (p.bot ? ' <span class="bot">BOT</span>' : '') + '</td>'
+        + '<td class="num">' + esc(p.score) + '</td>'
+        + '<td class="num">' + (p.bot ? '' : esc(p.ping) + 'ms') + '</td>'
+        + '</tr>';
+    }).join('');
+    el.list.innerHTML = '<table>' + rows + '</table>';
+
+    var h = d.humans, b = d.bots;
+    el.foot.textContent = h + (h === 1 ? ' player' : ' players')
+      + (b ? ' and ' + b + (b === 1 ? ' bot' : ' bots') : '');
+  }
+
+  function poll(){
+    if(!window.fetch){ offline('this browser cannot check'); return; }
+    fetch(ENDPOINT, {cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(render)
+      .catch(function(){ offline('status is unavailable'); });
+  }
+
+  poll();
+  setInterval(poll, EVERY);
 })();
 </script>
 </body>
