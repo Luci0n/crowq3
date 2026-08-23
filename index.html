@@ -541,6 +541,12 @@
   .qcon-team{color:#59cbd5}
   .qcon-frag{color:#aaa29a;font-weight:normal}
   .qcon-weapon{color:#6f6761;font-size:10px;font-weight:normal;margin-left:5px}
+  .qcon-event{color:#b7afa5;font-weight:normal}
+  .qcon-join{color:#82c985}
+  .qcon-leave{color:#8c837c}
+  .qcon-map{color:#e1d4c1;letter-spacing:.7px}
+  .qcon-limit{color:#c9a678}
+  .qcon-limit-hit{color:#d47c61}
   .qcon-empty{color:#746a62;font-weight:normal}
   .qcon-prompt{color:#e6ddd2;animation:qblink 1.05s steps(1,end) infinite}
   @keyframes qblink{50%{opacity:0}}
@@ -1338,9 +1344,11 @@
       run = '';
     }
     while(i < raw.length){
-      if(raw.charAt(i) === '^' && i + 1 < raw.length && /[0-9]/.test(raw.charAt(i + 1))){
+      if(raw.charAt(i) === '^' && i + 1 < raw.length && /[0-9sSrR]/.test(raw.charAt(i + 1))){
         flush();
-        cur = Q3C[parseInt(raw.charAt(i + 1), 10) % 8];
+        cur = /[0-9]/.test(raw.charAt(i + 1))
+          ? Q3C[parseInt(raw.charAt(i + 1), 10) % 8]
+          : '#b6aea4';
         i += 2;
         continue;
       }
@@ -1372,6 +1380,32 @@
         + '<span class="qcon-frag"> fragged </span>' + colorName(event.victim, '?')
         + '<span class="qcon-weapon">[' + esc(weapon) + ']</span></div>';
     }
+    if(event.type === 'join' || event.type === 'leave'){
+      var action = event.type === 'join' ? ' entered the game' : ' disconnected';
+      var stateClass = event.type === 'join' ? 'qcon-join' : 'qcon-leave';
+      return '<div class="qcon-line">' + time + colorName(event.actor, '?')
+        + '<span class="qcon-event ' + stateClass + '">' + action + '</span></div>';
+    }
+    if(event.type === 'map'){
+      return '<div class="qcon-line">' + time
+        + '<span class="qcon-event qcon-map">----- map: '
+        + esc(event.map || '?') + ' -----</span></div>';
+    }
+    if(event.type === 'limits'){
+      return '<div class="qcon-line">' + time
+        + '<span class="qcon-event qcon-limit">timelimit ' + esc(event.timelimit)
+        + '  fraglimit ' + esc(event.fraglimit) + '</span></div>';
+    }
+    if(event.type === 'limit_change'){
+      return '<div class="qcon-line">' + time
+        + '<span class="qcon-event qcon-limit">' + esc(event.limit || 'limit')
+        + ' changed to ' + esc(event.value) + '</span></div>';
+    }
+    if(event.type === 'limit_hit'){
+      return '<div class="qcon-line">' + time
+        + '<span class="qcon-event qcon-limit-hit">' + esc(event.limit || 'limit')
+        + ' hit</span></div>';
+    }
     return '';
   }
 
@@ -1381,7 +1415,7 @@
     var lines = events.map(consoleLine).filter(Boolean);
     consoleBox.innerHTML = (lines.length
       ? lines.join('')
-      : '<div class="qcon-empty">no chat or frags yet</div>')
+      : '<div class="qcon-empty">no server events yet</div>')
       + '<div class="qcon-prompt">_</div>';
     consoleBox.scrollTop = consoleBox.scrollHeight;
   }

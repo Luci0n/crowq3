@@ -31,8 +31,8 @@ links being rewritten for it.
 
 The join page has two live readouts. `status.json` supplies the map, mode,
 players and scores every 15 seconds. `events.json` supplies a bounded,
-sanitized feed of public chat and frags every 2.5 seconds while its initially
-folded console is open. Both are served over HTTPS from the game host's
+sanitized feed of public chat, frags, joins/leaves, map transitions and match
+limits every 2.5 seconds while its initially folded console is open. Both are served over HTTPS from the game host's
 `/status/` location; the public page never receives
 the raw server journal, player addresses, RCON traffic or social-bot debug
 output.
