@@ -154,13 +154,19 @@
     box-shadow:inset 0 0 0 1px #33291f, inset 0 0 60px rgba(90,15,8,.30);
   }
   .dlbox:before{
-    content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
-    background:url("img/g_bots.gif") 50% 58% / 112% auto no-repeat;
-    opacity:.24;filter:sepia(.35) saturate(.55) contrast(1.18);
+    content:"";position:absolute;inset:-45% -12%;z-index:-2;pointer-events:none;
+    background:
+      linear-gradient(90deg,transparent 47%,rgba(151,31,19,.28) 48% 50%,transparent 51%) 0 0/54px 42px,
+      linear-gradient(0deg,transparent 46%,rgba(94,19,13,.22) 47% 49%,transparent 50%) 0 0/72px 38px,
+      linear-gradient(135deg,transparent 46%,rgba(128,24,16,.2) 47% 49%,transparent 50%) 0 0/76px 76px;
+    opacity:.48;animation:panelCircuit 30s linear infinite;
   }
   .dlbox:after{
     content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-    background:linear-gradient(90deg,rgba(8,7,6,.94),rgba(25,7,4,.64),rgba(8,7,6,.94));
+    background:
+      linear-gradient(108deg,transparent 26%,rgba(155,30,14,.18) 43%,rgba(240,62,27,.11) 50%,transparent 66%) -160% 0/240% 100% no-repeat,
+      linear-gradient(90deg,rgba(8,7,6,.94),rgba(25,7,4,.68),rgba(8,7,6,.94));
+    animation:panelSweep 11s ease-in-out infinite alternate;
   }
   .dlbox a.dl{
     display:block; width:max-content; max-width:calc(100% - 24px); box-sizing:border-box;
@@ -189,13 +195,31 @@
     box-shadow:inset 0 0 0 1px #33291f, inset 0 0 50px rgba(0,0,0,.9);
   }
   .addrbox:before{
-    content:"";position:absolute;inset:-18% -4%;z-index:-2;pointer-events:none;
-    background:url("img/g_index.gif") 64% 48% / cover no-repeat;
-    opacity:.18;filter:grayscale(.35) contrast(1.15);
+    content:"";position:absolute;inset:-50% -8%;z-index:-2;pointer-events:none;
+    background:
+      linear-gradient(45deg,transparent 47%,rgba(129,22,17,.25) 48% 50%,transparent 51%) 0 0/58px 58px,
+      linear-gradient(-45deg,transparent 47%,rgba(83,14,12,.22) 48% 50%,transparent 51%) 0 0/86px 86px,
+      repeating-linear-gradient(90deg,transparent 0 24px,rgba(120,20,14,.12) 25px 27px,transparent 28px 52px);
+    opacity:.52;animation:panelCircuitReverse 38s linear infinite;
   }
   .addrbox:after{
     content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-    background:radial-gradient(ellipse at center,rgba(30,8,4,.38),rgba(4,3,3,.91) 73%);
+    background:
+      linear-gradient(125deg,transparent 32%,rgba(210,38,18,.14) 45%,rgba(115,13,10,.2) 52%,transparent 65%) 150% 0/230% 100% no-repeat,
+      radial-gradient(ellipse at center,rgba(30,8,4,.43),rgba(4,3,3,.91) 73%);
+    animation:panelSweepReverse 15s ease-in-out infinite alternate;
+  }
+  @keyframes panelCircuit{
+    to{background-position:108px 0,0 76px,76px -76px}
+  }
+  @keyframes panelCircuitReverse{
+    to{background-position:-116px 116px,172px -172px,-104px 0}
+  }
+  @keyframes panelSweep{
+    from{background-position:-160% 0,0 0}to{background-position:170% 0,0 0}
+  }
+  @keyframes panelSweepReverse{
+    from{background-position:160% 0,center}to{background-position:-150% 0,center}
   }
   .addrbox .lbl{color:var(--dim);font-size:9.5px;letter-spacing:4px}
   .addrbox .ip{
@@ -466,27 +490,50 @@
     transition:height .24s cubic-bezier(.22,.61,.36,1),opacity .2s .04s ease,
                visibility 0s;
   }
-  .qcon-clip{height:100%;overflow:hidden}
+  .qcon-clip{position:relative;height:100%;overflow:hidden;background:#080101}
   .qcon-hd b{color:#a99d8d;font-weight:normal}
   .qcon-hd span{margin-left:auto;color:#51483f;letter-spacing:1.5px}
+  .qcon-motion{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#100201}
+  .qcon-motion:before{
+    content:"";position:absolute;inset:-35% -18%;opacity:.72;
+    background:
+      linear-gradient(90deg,transparent 46%,rgba(155,18,14,.46) 47% 50%,transparent 51%) 0 0/68px 52px,
+      linear-gradient(0deg,transparent 45%,rgba(107,12,11,.4) 46% 49%,transparent 50%) 0 0/94px 64px,
+      linear-gradient(135deg,transparent 46%,rgba(143,18,14,.35) 47% 49%,transparent 50%) 0 0/82px 82px,
+      repeating-linear-gradient(90deg,transparent 0 13px,rgba(72,7,7,.34) 14px 16px,transparent 17px 31px);
+    mix-blend-mode:screen;animation:qCircuitDrift 34s linear infinite;
+    will-change:transform,background-position;
+  }
+  .qcon-motion:after{
+    content:"";position:absolute;inset:-52% -28%;opacity:.82;border-radius:42% 58% 47% 53%;
+    background:
+      repeating-radial-gradient(ellipse at 34% 52%,transparent 0 17px,rgba(255,40,20,.08) 24px,transparent 36px),
+      linear-gradient(125deg,transparent 27%,rgba(111,6,5,.2) 38%,rgba(255,50,23,.44) 49%,rgba(120,8,7,.24) 57%,transparent 70%);
+    background-size:190px 125px,180% 180%;mix-blend-mode:screen;
+    filter:blur(4px) contrast(1.28);animation:qEnergyWave 7.5s ease-in-out infinite alternate;
+    will-change:transform,background-position,border-radius;
+  }
+  .qcon:not(.open) .qcon-motion:before,.qcon:not(.open) .qcon-motion:after{animation-play-state:paused}
+  @keyframes qCircuitDrift{
+    from{transform:translate3d(-3%,0,0);background-position:0 0,0 0,0 0,0 0}
+    to{transform:translate3d(5%,0,0);background-position:136px 0,0 128px,164px -164px,62px 0}
+  }
+  @keyframes qEnergyWave{
+    0%{transform:translate3d(-11%,-8%,0) skewY(-3deg) scale(1.03,.96);background-position:0 0,-35% 15%;border-radius:42% 58% 47% 53%}
+    48%{transform:translate3d(1%,3%,0) skewY(2deg) scale(1.08,1.04);background-position:75px -34px,55% 62%;border-radius:57% 43% 58% 42%}
+    100%{transform:translate3d(12%,9%,0) skewY(4deg) scale(1.12,.94);background-position:150px -68px,135% 105%;border-radius:46% 54% 39% 61%}
+  }
   .qcon-screen{
-    position:relative;height:210px;overflow-y:auto;box-sizing:border-box;
+    position:relative;z-index:1;height:210px;overflow-y:auto;box-sizing:border-box;
     padding:11px 14px 14px;
     background:
-      repeating-linear-gradient(0deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px),
-      radial-gradient(ellipse at 50% 115%,rgba(96,9,3,.63),transparent 68%),
-      linear-gradient(180deg,rgba(19,4,2,.95),rgba(2,2,2,.98));
+      repeating-linear-gradient(0deg,rgba(255,255,255,.027) 0 1px,transparent 1px 3px),
+      radial-gradient(ellipse at 50% 115%,rgba(96,9,3,.28),transparent 68%),
+      linear-gradient(180deg,rgba(10,1,1,.58),rgba(2,0,0,.78));
     box-shadow:inset 0 0 38px #000,inset 0 1px 0 #30130d;
     scrollbar-color:#502017 #090504;scrollbar-width:thin;
     font-family:"Courier New",Courier,monospace;font-size:12px;font-weight:bold;
     line-height:1.36;text-shadow:1px 1px 0 #000;letter-spacing:.1px;
-  }
-  .qcon.open .qcon-screen{
-    background:
-      repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),
-      radial-gradient(ellipse at 50% 115%,rgba(96,9,3,.69),transparent 68%),
-      linear-gradient(180deg,rgba(16,3,2,.82),rgba(2,2,2,.93)),
-      url("img/g_overview.gif") center 42% / cover no-repeat;
   }
   .qcon-line{min-height:1.36em;overflow-wrap:anywhere;color:#b6aea4}
   .qcon-time{color:#786f68;margin-right:6px;font-weight:normal}
@@ -550,7 +597,9 @@
     .qcon-reveal,.qcon.open .qcon-reveal{transition-duration:.18s,.14s,0s}
     details.fold,details.fold>summary,details.fold .bd{transition:none!important;animation:none!important}
     .qcon-prompt,.rack.on .dot{animation:none}
-    .dlbox:before,.addrbox:before{background-image:none}
+    .dlbox:before,.addrbox:before{display:none}
+    .dlbox:after,.addrbox:after{animation-duration:20s}
+    .qcon-motion:after{filter:none;opacity:.62}
   }
 
   @media(forced-colors:active){
@@ -719,14 +768,6 @@
   @media(prefers-reduced-motion:reduce){
     *, *:before, *:after{animation:none !important; transition:none !important}
     .rv{opacity:1; transform:none}
-    .dlbox:before,.addrbox:before{background-image:none}
-    .qcon.open .qcon-screen{
-      background-image:
-        repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),
-        radial-gradient(ellipse at 50% 115%,rgba(96,9,3,.69),transparent 68%),
-        linear-gradient(180deg,rgba(16,3,2,.82),rgba(2,2,2,.93)),
-        url("img/b_dev.jpg");
-    }
   }
 </style>
 </head>
@@ -838,6 +879,7 @@
             </button>
             <div class="qcon-reveal" id="liveConsoleReveal" aria-hidden="true">
               <div class="qcon-clip">
+                <div class="qcon-motion" aria-hidden="true"></div>
                 <div class="qcon-screen" id="liveConsole" role="log" aria-live="polite" aria-relevant="additions text">
                   <div class="qcon-empty">opening server feed</div>
                   <div class="qcon-prompt">_</div>

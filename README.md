@@ -71,12 +71,13 @@ connection. On the reference page each section's art is requested the first
 time that section is opened, so arriving at the page costs one clip rather than
 four.
 
-The join page reuses those clips as restrained environmental motion rather
-than adding more assets: different crops sit behind the download and address
-panels, while the live console uses a veiled arena clip only while it is open.
-The decorative panel clips are disabled at the mobile breakpoint; the console
-keeps its single open-only clip and uses a short fixed-height reveal with no
-runtime layout measurement.
+The join page's console and utility panels do not reuse that footage. Their
+motion is procedural CSS: layered red circuit traces drift at different rates
+while translucent highlights sweep across them. The console adds a faster,
+soft-edged diagonal energy layer over its slow circuit field. Motion pauses
+while the console is closed, the reveal has a fixed bound and requires no
+runtime layout measurement, and mobile drops the decorative circuit layers
+outside the console.
 
 The CSS darkens whatever it is given, so replacement art does not need to be
 prepared to match. Banner strips are roughly 520–1000 px wide by 300 tall and
