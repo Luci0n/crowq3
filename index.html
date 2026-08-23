@@ -415,13 +415,25 @@
   .rack-tick{ margin-left:auto; color:#4f473d; letter-spacing:1.5px; }
 
   /* ---- live game console ---- */
-  .qcon{border-top:1px solid #24120d;background:#050303}
+  details.qcon{border:0;border-top:1px solid #24120d;background:#050303}
   .qcon-hd{
     display:flex;align-items:center;gap:8px;padding:7px 26px;
     border-bottom:1px solid #000;background:linear-gradient(180deg,#1b100d,#0c0807);
     color:#74675c;font-family:"Arial Black",Arial,sans-serif;font-size:8px;
     letter-spacing:2.5px;text-transform:uppercase;
   }
+  details.qcon>summary{list-style:none;cursor:pointer;user-select:none}
+  details.qcon>summary::-webkit-details-marker{display:none}
+  details.qcon>summary::marker{content:""}
+  details.qcon>summary:after{
+    content:"+";display:inline-flex;align-items:center;justify-content:center;
+    width:18px;height:15px;margin-left:6px;border:1px solid #000;
+    background:linear-gradient(180deg,var(--blood),var(--blood2));
+    color:#e8ddc9;font:700 13px/1 "Courier New",monospace;
+    box-shadow:inset 0 1px 0 rgba(255,120,90,.2);
+  }
+  details.qcon[open]>summary:after{content:"\2212"}
+  details.qcon>summary:hover b{color:#e2d7c5}
   .qcon-hd b{color:#a99d8d;font-weight:normal}
   .qcon-hd span:last-child{margin-left:auto;color:#51483f;letter-spacing:1.5px}
   .qcon-screen{
@@ -494,6 +506,8 @@
     .rack-mode{font-size:9px;letter-spacing:1.5px}
     .rack-ft{font-size:10px;letter-spacing:1px}
     .qcon-screen{height:230px;padding-left:10px;padding-right:10px;font-size:11px}
+    details.fold,details.fold>summary,details.fold .bd{transition:none!important;animation:none!important}
+    .qcon-prompt,.rack.on .dot{animation:none}
   }
 
   @media(forced-colors:active){
@@ -764,16 +778,16 @@
             <span class="rack-tick" id="liveTick"></span>
           </div>
 
-          <div class="qcon" aria-label="Live server console">
-            <div class="qcon-hd">
+          <details class="qcon" id="liveConsolePanel">
+            <summary class="qcon-hd">
               <b>LIVE CONSOLE</b>
               <span>CHAT + FRAGS</span>
-            </div>
+            </summary>
             <div class="qcon-screen" id="liveConsole" role="log" aria-live="polite" aria-relevant="additions text">
-              <div class="qcon-empty">connecting to server feed</div>
+              <div class="qcon-empty">opening server feed</div>
               <div class="qcon-prompt">_</div>
             </div>
-          </div>
+          </details>
         </div>
 
 
@@ -1041,7 +1055,14 @@
 
   var reduce = window.matchMedia
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var DUR = reduce ? 0 : 280;
+  var narrow = window.matchMedia
+    && window.matchMedia('(max-width: 640px)').matches;
+
+  /* Native <details> is much cheaper on phones: no scrollHeight reads, forced
+     layout, or height animation across the rest of this long page. */
+  if(reduce || narrow) return;
+
+  var DUR = 280;
 
   function bodyOf(d){
     for(var i = 0; i < d.children.length; i++){
@@ -1184,6 +1205,7 @@
   var lastOk = 0;
   var heldFor = 0;
   var consoleBox = document.getElementById('liveConsole');
+  var consolePanel = document.getElementById('liveConsolePanel');
 
   /* The still is already painted by CSS. Swap the clip in only once it has
      actually downloaded, so nobody ever looks at an empty box. Same approach
@@ -1393,7 +1415,9 @@
   var eventTimer = null;
   function start(){
     if(!timer) timer = setInterval(poll, EVERY);
-    if(!eventTimer) eventTimer = setInterval(pollConsole, EVENT_EVERY);
+    if(consolePanel && consolePanel.open && !eventTimer){
+      eventTimer = setInterval(pollConsole, EVENT_EVERY);
+    }
   }
   function stop(){
     if(timer){ clearInterval(timer); timer = null; }
@@ -1401,11 +1425,26 @@
   }
   document.addEventListener('visibilitychange', function(){
     if(document.hidden){ stop(); }
-    else { poll(); pollConsole(); start(); }
+    else {
+      poll();
+      if(consolePanel && consolePanel.open) pollConsole();
+      start();
+    }
   });
 
+  if(consolePanel){
+    consolePanel.addEventListener('toggle', function(){
+      if(consolePanel.open){
+        pollConsole();
+        start();
+      } else if(eventTimer){
+        clearInterval(eventTimer);
+        eventTimer = null;
+      }
+    });
+  }
+
   poll();
-  pollConsole();
   start();
   setInterval(tick, 1000);
 })();
