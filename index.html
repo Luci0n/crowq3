@@ -148,9 +148,19 @@
 
   /* ---- download ---- */
   .dlbox{
+    position:relative;isolation:isolate;overflow:hidden;
     border:1px solid #000; background:#0c0a08; text-align:center;
     padding:22px 12px 16px; margin:18px 0;
     box-shadow:inset 0 0 0 1px #33291f, inset 0 0 60px rgba(90,15,8,.30);
+  }
+  .dlbox:before{
+    content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+    background:url("img/g_bots.gif") 50% 58% / 112% auto no-repeat;
+    opacity:.24;filter:sepia(.35) saturate(.55) contrast(1.18);
+  }
+  .dlbox:after{
+    content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:linear-gradient(90deg,rgba(8,7,6,.94),rgba(25,7,4,.64),rgba(8,7,6,.94));
   }
   .dlbox a.dl{
     display:block; width:max-content; max-width:calc(100% - 24px); box-sizing:border-box;
@@ -173,9 +183,19 @@
 
   /* ---- address ---- */
   .addrbox{
+    position:relative;isolation:isolate;overflow:hidden;
     border:1px solid #000; background:#080706; text-align:center;
     padding:18px 12px; margin:16px 0;
     box-shadow:inset 0 0 0 1px #33291f, inset 0 0 50px rgba(0,0,0,.9);
+  }
+  .addrbox:before{
+    content:"";position:absolute;inset:-18% -4%;z-index:-2;pointer-events:none;
+    background:url("img/g_index.gif") 64% 48% / cover no-repeat;
+    opacity:.18;filter:grayscale(.35) contrast(1.15);
+  }
+  .addrbox:after{
+    content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:radial-gradient(ellipse at center,rgba(30,8,4,.38),rgba(4,3,3,.91) 73%);
   }
   .addrbox .lbl{color:var(--dim);font-size:9.5px;letter-spacing:4px}
   .addrbox .ip{
@@ -415,27 +435,40 @@
   .rack-tick{ margin-left:auto; color:#4f473d; letter-spacing:1.5px; }
 
   /* ---- live game console ---- */
-  details.qcon{border:0;border-top:1px solid #24120d;background:#050303}
+  .qcon{border:0;border-top:1px solid #24120d;background:#050303}
   .qcon-hd{
+    width:100%;box-sizing:border-box;border:0;text-align:left;cursor:pointer;
     display:flex;align-items:center;gap:8px;padding:7px 26px;
     border-bottom:1px solid #000;background:linear-gradient(180deg,#1b100d,#0c0807);
     color:#74675c;font-family:"Arial Black",Arial,sans-serif;font-size:8px;
     letter-spacing:2.5px;text-transform:uppercase;
   }
-  details.qcon>summary{list-style:none;cursor:pointer;user-select:none}
-  details.qcon>summary::-webkit-details-marker{display:none}
-  details.qcon>summary::marker{content:""}
-  details.qcon>summary:after{
-    content:"+";display:inline-flex;align-items:center;justify-content:center;
-    width:18px;height:15px;margin-left:6px;border:1px solid #000;
+  .qcon-hd:focus-visible{outline:2px solid #8a4d32;outline-offset:-2px}
+  .qcon-toggle{
+    position:relative;flex:0 0 auto;width:18px;height:15px;margin-left:6px;border:1px solid #000;
     background:linear-gradient(180deg,var(--blood),var(--blood2));
-    color:#e8ddc9;font:700 13px/1 "Courier New",monospace;
     box-shadow:inset 0 1px 0 rgba(255,120,90,.2);
   }
-  details.qcon[open]>summary:after{content:"\2212"}
-  details.qcon>summary:hover b{color:#e2d7c5}
+  .qcon-toggle:before,.qcon-toggle:after{
+    content:"";position:absolute;left:50%;top:50%;width:8px;height:2px;
+    background:#e8ddc9;box-shadow:0 1px 0 #000;transform:translate(-50%,-50%);
+  }
+  .qcon-toggle:after{width:2px;height:8px;transition:transform .18s ease,opacity .18s ease}
+  .qcon.open .qcon-toggle:after{opacity:0;transform:translate(-50%,-50%) rotate(90deg)}
+  .qcon-hd:hover b{color:#e2d7c5}
+  .qcon-reveal{
+    height:0;overflow:hidden;opacity:0;visibility:hidden;
+    transition:height .24s cubic-bezier(.22,.61,.36,1),opacity .18s ease,
+               visibility 0s linear .24s;
+  }
+  .qcon.open .qcon-reveal{
+    height:210px;opacity:1;visibility:visible;
+    transition:height .24s cubic-bezier(.22,.61,.36,1),opacity .2s .04s ease,
+               visibility 0s;
+  }
+  .qcon-clip{height:100%;overflow:hidden}
   .qcon-hd b{color:#a99d8d;font-weight:normal}
-  .qcon-hd span:last-child{margin-left:auto;color:#51483f;letter-spacing:1.5px}
+  .qcon-hd span{margin-left:auto;color:#51483f;letter-spacing:1.5px}
   .qcon-screen{
     position:relative;height:210px;overflow-y:auto;box-sizing:border-box;
     padding:11px 14px 14px;
@@ -447,6 +480,13 @@
     scrollbar-color:#502017 #090504;scrollbar-width:thin;
     font-family:"Courier New",Courier,monospace;font-size:12px;font-weight:bold;
     line-height:1.36;text-shadow:1px 1px 0 #000;letter-spacing:.1px;
+  }
+  .qcon.open .qcon-screen{
+    background:
+      repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),
+      radial-gradient(ellipse at 50% 115%,rgba(96,9,3,.69),transparent 68%),
+      linear-gradient(180deg,rgba(16,3,2,.82),rgba(2,2,2,.93)),
+      url("img/g_overview.gif") center 42% / cover no-repeat;
   }
   .qcon-line{min-height:1.36em;overflow-wrap:anywhere;color:#b6aea4}
   .qcon-time{color:#786f68;margin-right:6px;font-weight:normal}
@@ -506,8 +546,11 @@
     .rack-mode{font-size:9px;letter-spacing:1.5px}
     .rack-ft{font-size:10px;letter-spacing:1px}
     .qcon-screen{height:230px;padding-left:10px;padding-right:10px;font-size:11px}
+    .qcon.open .qcon-reveal{height:230px}
+    .qcon-reveal,.qcon.open .qcon-reveal{transition-duration:.18s,.14s,0s}
     details.fold,details.fold>summary,details.fold .bd{transition:none!important;animation:none!important}
     .qcon-prompt,.rack.on .dot{animation:none}
+    .dlbox:before,.addrbox:before{background-image:none}
   }
 
   @media(forced-colors:active){
@@ -676,6 +719,14 @@
   @media(prefers-reduced-motion:reduce){
     *, *:before, *:after{animation:none !important; transition:none !important}
     .rv{opacity:1; transform:none}
+    .dlbox:before,.addrbox:before{background-image:none}
+    .qcon.open .qcon-screen{
+      background-image:
+        repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px),
+        radial-gradient(ellipse at 50% 115%,rgba(96,9,3,.69),transparent 68%),
+        linear-gradient(180deg,rgba(16,3,2,.82),rgba(2,2,2,.93)),
+        url("img/b_dev.jpg");
+    }
   }
 </style>
 </head>
@@ -778,16 +829,22 @@
             <span class="rack-tick" id="liveTick"></span>
           </div>
 
-          <details class="qcon" id="liveConsolePanel">
-            <summary class="qcon-hd">
+          <div class="qcon" id="liveConsolePanel" aria-label="Live server console">
+            <button class="qcon-hd" id="liveConsoleToggle" type="button"
+                    aria-expanded="false" aria-controls="liveConsoleReveal">
               <b>LIVE CONSOLE</b>
               <span>CHAT + FRAGS</span>
-            </summary>
-            <div class="qcon-screen" id="liveConsole" role="log" aria-live="polite" aria-relevant="additions text">
-              <div class="qcon-empty">opening server feed</div>
-              <div class="qcon-prompt">_</div>
+              <i class="qcon-toggle" aria-hidden="true"></i>
+            </button>
+            <div class="qcon-reveal" id="liveConsoleReveal" aria-hidden="true">
+              <div class="qcon-clip">
+                <div class="qcon-screen" id="liveConsole" role="log" aria-live="polite" aria-relevant="additions text">
+                  <div class="qcon-empty">opening server feed</div>
+                  <div class="qcon-prompt">_</div>
+                </div>
+              </div>
             </div>
-          </details>
+          </div>
         </div>
 
 
@@ -1206,6 +1263,8 @@
   var heldFor = 0;
   var consoleBox = document.getElementById('liveConsole');
   var consolePanel = document.getElementById('liveConsolePanel');
+  var consoleToggle = document.getElementById('liveConsoleToggle');
+  var consoleReveal = document.getElementById('liveConsoleReveal');
 
   /* The still is already painted by CSS. Swap the clip in only once it has
      actually downloaded, so nobody ever looks at an empty box. Same approach
@@ -1413,9 +1472,27 @@
      so what you see on return is current rather than up to EVERY ms old. */
   var timer = null;
   var eventTimer = null;
+  function consoleIsOpen(){
+    return !!(consolePanel && consolePanel.classList.contains('open'));
+  }
+
+  function setConsoleOpen(open){
+    if(!consolePanel || !consoleToggle || !consoleReveal) return;
+    consolePanel.classList.toggle('open', open);
+    consoleToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    consoleReveal.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if(open){
+      pollConsole();
+      start();
+    } else if(eventTimer){
+      clearInterval(eventTimer);
+      eventTimer = null;
+    }
+  }
+
   function start(){
     if(!timer) timer = setInterval(poll, EVERY);
-    if(consolePanel && consolePanel.open && !eventTimer){
+    if(consoleIsOpen() && !eventTimer){
       eventTimer = setInterval(pollConsole, EVENT_EVERY);
     }
   }
@@ -1427,20 +1504,14 @@
     if(document.hidden){ stop(); }
     else {
       poll();
-      if(consolePanel && consolePanel.open) pollConsole();
+      if(consoleIsOpen()) pollConsole();
       start();
     }
   });
 
-  if(consolePanel){
-    consolePanel.addEventListener('toggle', function(){
-      if(consolePanel.open){
-        pollConsole();
-        start();
-      } else if(eventTimer){
-        clearInterval(eventTimer);
-        eventTimer = null;
-      }
+  if(consoleToggle){
+    consoleToggle.addEventListener('click', function(){
+      setConsoleOpen(!consoleIsOpen());
     });
   }
 

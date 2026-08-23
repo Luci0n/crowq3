@@ -71,6 +71,13 @@ connection. On the reference page each section's art is requested the first
 time that section is opened, so arriving at the page costs one clip rather than
 four.
 
+The join page reuses those clips as restrained environmental motion rather
+than adding more assets: different crops sit behind the download and address
+panels, while the live console uses a veiled arena clip only while it is open.
+The decorative panel clips are disabled at the mobile breakpoint; the console
+keeps its single open-only clip and uses a short fixed-height reveal with no
+runtime layout measurement.
+
 The CSS darkens whatever it is given, so replacement art does not need to be
 prepared to match. Banner strips are roughly 520–1000 px wide by 300 tall and
 other sizes are cropped to fill.
