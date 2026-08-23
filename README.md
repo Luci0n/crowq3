@@ -29,6 +29,13 @@ Every path in the HTML is relative, which is what lets the site sit under the
 `/crowq3/` prefix a GitHub Pages project site is served from without any of the
 links being rewritten for it.
 
+The join page has two live readouts. `status.json` supplies the map, mode,
+players and scores every 15 seconds. `events.json` supplies a bounded,
+sanitized feed of public chat and frags every 2.5 seconds. Both are served over
+HTTPS from the game host's `/status/` location; the public page never receives
+the raw server journal, player addresses, RCON traffic or social-bot debug
+output.
+
 ## How the reference page works
 
 All four sections of `dev.html` exist in the document at once. Selecting a tab
@@ -81,6 +88,15 @@ into the matching section, as do the older `bots.html`, `weapons.html` and
 
 GitHub Pages builds from `main` on push. `404.html` is served for any address
 that does not resolve, at any depth, which is why its links are absolute.
+
+Preview locally over HTTP before pushing:
+
+```bash
+python -m http.server 8765 --directory crowq3
+```
+
+Do not open the files through `file://`; that is not equivalent to the way
+GitHub Pages serves them.
 
 The server address players are given appears exactly once, in the `.addrbox`
 block of `index.html`.
