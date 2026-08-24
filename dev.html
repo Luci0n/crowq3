@@ -13,6 +13,7 @@
 <meta property="og:url" content="https://luci0n.github.io/crowq3/dev.html">
 <meta property="og:image" content="https://luci0n.github.io/crowq3/img/b_dev.jpg">
 <title>:: QUAKE III ARENA :: DEVELOPER ::</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root{
     --void:#0a0908; --panel:#16130f; --panel2:#1d1915; --edge:#2f2820;
@@ -366,6 +367,21 @@
     *, *:before, *:after{animation:none !important; transition:none !important}
     .rv{opacity:1; transform:none}
   }
+
+  /* ---- shared site typography ---- */
+  :root{--dim:#8f8475}
+  body{font-family:"Rajdhani",Verdana,Arial,Helvetica,sans-serif;font-weight:500}
+  .banner h1,h2,.step .hd,.dlbox a.dl,table.data th,.tabs a,.subtabs a,
+  details.fold>summary{
+    font-family:"Rajdhani",Verdana,Arial,sans-serif;
+    font-weight:700;
+  }
+  code,pre,.step .hd .n,.addrbox .ip,details.fold>summary:before{
+    font-family:"Share Tech Mono","Courier New",Courier,monospace;
+  }
+  .banner .sub{letter-spacing:3px}
+  .dlbox .sz{letter-spacing:2px}
+  .tabs a,.subtabs a{color:var(--dim)}
 </style>
 </head>
 <body>

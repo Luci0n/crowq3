@@ -13,6 +13,7 @@
 <meta property="og:url" content="https://luci0n.github.io/crowq3/">
 <meta property="og:image" content="https://luci0n.github.io/crowq3/img/b_index.jpg">
 <title>:: CROW'S QUAKE III ARENA SERVER ::</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root{
     --void:#0a0908; --panel:#16130f; --panel2:#1d1915; --edge:#2f2820;
@@ -38,7 +39,7 @@
       radial-gradient(ellipse at 50% -10%, #1e1a15 0%, transparent 55%),
       radial-gradient(ellipse at 50% 115%, #210a05 0%, transparent 60%);
     color:var(--bone);
-    font-family:Verdana,Arial,Helvetica,sans-serif;
+    font-family:"Rajdhani",Verdana,Arial,Helvetica,sans-serif;
     font-size:12px; line-height:1.6;
   }
   /* vignette over everything */
@@ -78,7 +79,7 @@
     box-shadow:inset 0 -1px 0 #2b241c;
   }
   .banner h1{
-    margin:0; font-family:Impact,"Arial Black",Arial,sans-serif; font-weight:normal;
+    margin:0; font-family:"Michroma",Impact,"Arial Black",Arial,sans-serif; font-weight:normal;
     font-size:41px; letter-spacing:4px; line-height:1;
     background:linear-gradient(180deg,#e6dccb 0%,#9d9384 38%,#5d554a 72%,#332d26 100%);
     -webkit-background-clip:text; background-clip:text;
@@ -96,7 +97,7 @@
 
   /* ---- headings ---- */
   h2{
-    font-family:"Arial Black",Arial,sans-serif; font-size:12px; letter-spacing:4px;
+    font-family:"Oxanium","Arial Black",Arial,sans-serif; font-size:12px; font-weight:700; letter-spacing:3px;
     text-transform:uppercase; color:var(--ash); margin:30px 0 3px;
     text-shadow:0 2px 0 #000;
   }
@@ -114,9 +115,9 @@
   .small{font-size:11px;color:var(--dim)}
   b.hot{color:#b8452e}
 
-  code{font-family:"Courier New",Courier,monospace;font-size:12px;color:#c0a878}
+  code{font-family:"Share Tech Mono","Courier New",Courier,monospace;font-size:12px;color:#c0a878}
   pre{
-    font-family:"Courier New",Courier,monospace; font-size:12px;
+    font-family:"Share Tech Mono","Courier New",Courier,monospace; font-size:12px;
     background:#080706; color:#9c8f7a; border:1px solid #000;
     box-shadow:inset 0 0 0 1px #2b241c, inset 0 0 26px rgba(0,0,0,.85);
     padding:10px 12px; margin:10px 0; overflow-x:auto;
@@ -775,6 +776,600 @@
     *, *:before, *:after{animation:none !important; transition:none !important}
     .rv{opacity:1; transform:none}
   }
+
+  /* ---- unified typography ---- */
+  .banner h1,h2,.step .hd,.dlbox a.dl,.copy-address,.rack-state,.rack-k,
+  .rack-mode,.rack-list tr.hdr th,.rack-list .tag,.rack-ft,.qcon-hd,
+  table.data th,.tabs a,.subtabs a,details.fold>summary{
+    font-family:"Rajdhani",Verdana,Arial,sans-serif;
+    font-weight:700;
+  }
+  code,pre,.step .hd .n,.addrbox .ip,.rack-map,.rack-count,.rack-list .rk,
+  .rack-list .sc,.rack-list .pg,.qcon-screen,details.fold>summary:before{
+    font-family:"Share Tech Mono","Courier New",Courier,monospace;
+  }
+
+  /* ---- readability + address alignment ---- */
+  :root{--dim:#8f8475}
+  body{font-weight:500}
+  .banner .sub{letter-spacing:3px}
+  .dlbox .sz{font-size:10px;letter-spacing:2px}
+  .tabs a,.subtabs a{color:var(--dim)}
+
+  .addrbox{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:7px; min-height:150px; box-sizing:border-box; padding:22px 16px;
+  }
+  .addrbox .lbl{font-size:10px;letter-spacing:2.5px;line-height:1.2}
+  .addrbox .ip{
+    appearance:none;width:100%;margin:0;padding:0;border:0;background:none;cursor:pointer;
+    line-height:1.15;text-align:center;white-space:nowrap;
+  }
+  .addrbox .ip:hover,.addrbox .ip:focus-visible{
+    color:#fff3e0;outline:1px solid #70402e;outline-offset:4px;
+  }
+  .copy-address{margin:4px 0 0}
+  .copy-status{
+    position:absolute; left:12px; right:12px; bottom:6px;
+    min-height:1.3em; margin:0; color:#a69a89; text-align:center;
+  }
+
+  /* ---- compact server control terminal ---- */
+  .grapple-tip{
+    position:relative;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;
+    margin:24px 0 22px;padding:12px 14px;overflow:hidden;
+    border:1px solid #000;background:linear-gradient(180deg,#17110d,#0e0b09);
+    box-shadow:inset 0 0 0 1px #33291f,inset 4px 0 0 #6e1b10,0 4px 14px rgba(0,0,0,.42);
+  }
+  .grapple-tip:after{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.28;
+    background:linear-gradient(110deg,transparent 25%,rgba(151,42,24,.17) 48%,transparent 68%);
+    transform:translateX(-65%);animation:controlSweep 8s ease-in-out infinite;
+  }
+  .grapple-key{
+    position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:5px;
+    min-width:47px;padding:7px 8px;text-align:center;
+    border:1px solid #000;background:#080706;box-shadow:inset 0 0 0 1px #4a382a;
+    color:#e1d3bc;font:13px/1 "Share Tech Mono","Courier New",monospace;letter-spacing:1px;
+  }
+  .grapple-copy{position:relative;z-index:1;min-width:0}
+  .grapple-copy b{display:block;color:#c44f36;font-size:10px;letter-spacing:1.7px}
+  .grapple-copy span{display:block;margin-top:2px;color:#b7aa96;font-size:11px}
+  .grapple-state{
+    position:relative;z-index:1;color:#8f8475;font-size:9px;font-weight:700;letter-spacing:1.6px;
+    white-space:nowrap;text-transform:uppercase;
+  }
+
+  .control-section{margin:0 0 30px}
+  .control-titlebar{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:10px}
+  .control-titlebar h2{margin:0}
+  .control-titlebar p{margin:5px 0 0;max-width:560px;color:#aaa08f}
+  .control-id{
+    flex:0 0 auto;color:#766b5d;font:9px/1.3 "Share Tech Mono","Courier New",monospace;
+    letter-spacing:1.5px;text-align:right;white-space:nowrap;
+  }
+  .control-shell{
+    position:relative;isolation:isolate;overflow:hidden;border:1px solid #000;background:#0a0807;
+    box-shadow:inset 0 0 0 1px #34291f,inset 0 18px 38px rgba(0,0,0,.54),0 7px 24px rgba(0,0,0,.56);
+  }
+  .control-shell:before{
+    content:"";position:absolute;z-index:4;left:0;right:0;height:34px;top:-38px;pointer-events:none;
+    background:linear-gradient(180deg,transparent,rgba(161,54,31,.08),transparent);
+    animation:terminalScan 7.5s linear infinite;
+  }
+  .control-tabs{
+    position:relative;z-index:5;display:grid;grid-template-columns:repeat(2,1fr);
+    border-bottom:1px solid #000;background:linear-gradient(180deg,#211913,#120f0c);
+  }
+  .control-tab{
+    appearance:none;min-width:0;min-height:43px;padding:8px 10px;border:0;border-right:1px solid #000;
+    background:transparent;color:#82786a;cursor:pointer;touch-action:manipulation;
+    font:700 9px/1.15 "Rajdhani",Verdana,sans-serif;letter-spacing:1.8px;text-transform:uppercase;
+    transition:color .18s ease,background-color .18s ease,box-shadow .18s ease;
+  }
+  .control-tab:last-child{border-right:0}
+  .control-tab small{
+    display:block;margin-top:3px;color:#5f574d;font:8px/1 "Share Tech Mono","Courier New",monospace;
+    letter-spacing:.6px;transition:color .18s ease;
+  }
+  .control-tab:hover,.control-tab:focus-visible{color:#d5c9b4;background:rgba(115,45,27,.12);outline:0}
+  .control-tab:focus-visible{box-shadow:inset 0 0 0 2px #70402e}
+  .control-tab.active{
+    color:#f0e2cb;background:linear-gradient(180deg,#2c1d16,#19100c);
+    box-shadow:inset 0 -3px 0 var(--blood),inset 0 1px 0 #4a382a;
+  }
+  .control-tab.active small{color:#a4644d}
+
+  .control-main{
+    position:relative;z-index:2;display:grid;grid-template-columns:255px minmax(0,1fr);
+    height:430px;min-height:0;
+  }
+  .control-selector{
+    display:flex;flex-direction:column;min-width:0;min-height:0;border-right:1px solid #000;background:
+      repeating-linear-gradient(0deg,rgba(255,255,255,.009) 0 1px,transparent 1px 4px),
+      linear-gradient(180deg,#12100d,#0b0908);
+  }
+  .control-selector-head{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;
+    border-bottom:1px solid #000;color:#9d927f;font-size:9px;font-weight:700;letter-spacing:1.5px;
+  }
+  .control-selector-head span:last-child{
+    color:#655d52;font:8px/1 "Share Tech Mono","Courier New",monospace;letter-spacing:.5px;
+  }
+  .control-pane{
+    display:none;flex:1;min-height:0;max-height:none;overflow:auto;padding:7px;overscroll-behavior:contain;
+    scrollbar-width:thin;scrollbar-color:#49382b #0b0908;
+  }
+  .control-pane.active{display:grid;gap:3px}
+  .control-choice{
+    --i:0;position:relative;display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;align-items:center;
+    width:100%;min-height:38px;padding:5px 8px;border:1px solid transparent;background:transparent;
+    color:#8f8475;text-align:left;cursor:pointer;touch-action:manipulation;
+    transition:color .16s ease,background-color .16s ease,border-color .16s ease,transform .16s ease;
+    animation:choiceIn .22s ease both;animation-delay:calc(var(--i) * 16ms);
+  }
+  .control-choice:before{
+    content:"";position:absolute;left:-1px;top:5px;bottom:5px;width:2px;background:transparent;
+    transition:background-color .16s ease,box-shadow .16s ease;
+  }
+  .control-choice:hover,.control-choice:focus-visible{
+    color:#e0d3bd;background:#17110d;border-color:#2c241d;outline:0;transform:translateX(2px);
+  }
+  .control-choice:focus-visible{box-shadow:inset 0 0 0 1px #70402e}
+  .control-choice.active{color:#f0e2cb;background:linear-gradient(90deg,#24110c,#15100d 72%);border-color:#34261d}
+  .control-choice.active:before{background:#a02a18;box-shadow:0 0 8px rgba(160,42,24,.5)}
+  .control-num{color:#5d554b;font:8px/1 "Share Tech Mono","Courier New",monospace;text-align:right}
+  .control-choice.active .control-num{color:#a55b45}
+  .control-entry{min-width:0}
+  .control-code{
+    display:block;overflow:hidden;text-overflow:ellipsis;color:inherit;
+    font:10px/1.1 "Share Tech Mono","Courier New",monospace;white-space:nowrap;
+  }
+  .control-label{
+    display:block;overflow:hidden;text-overflow:ellipsis;margin-top:2px;color:#6f665b;
+    font:9px/1.1 "Rajdhani",Verdana,sans-serif;white-space:nowrap;
+  }
+  .control-map-label{display:flex;align-items:center;gap:5px;overflow:visible}
+  .control-map-title{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .control-map-meta{display:inline-flex;flex:0 0 auto;gap:3px;margin-left:auto}
+  .control-map-meta span{
+    padding:1px 3px;border:1px solid #2c241d;background:#0d0a08;color:#786c5e;
+    font:7px/1 "Share Tech Mono","Courier New",monospace;letter-spacing:.35px;
+  }
+  .control-choice:hover .control-map-meta span,.control-choice.active .control-map-meta span{
+    color:#b8a992;border-color:#49362a;
+  }
+  .control-choice:hover .control-label,.control-choice.active .control-label{color:#a99b87}
+
+  .control-screen{
+    position:relative;display:flex;flex-direction:column;height:100%;min-width:0;min-height:0;background:#070605;
+  }
+  .control-screen.switching{animation:screenSwap .24s ease}
+  .control-screen-head,.control-screen-foot{
+    position:relative;z-index:3;display:flex;flex:0 0 auto;align-items:center;justify-content:space-between;gap:10px;
+    min-height:29px;padding:0 10px;border-bottom:1px solid #000;background:#0c0a08;
+    color:#766c5e;font:8px/1 "Share Tech Mono","Courier New",monospace;letter-spacing:1px;
+  }
+  .control-screen-foot{border-top:1px solid #000;border-bottom:0}
+  .control-led{display:inline-flex;align-items:center;gap:6px;color:#845f50}
+  .control-led:before{
+    content:"";width:5px;height:5px;border-radius:50%;background:#9d2b19;
+    box-shadow:0 0 7px rgba(170,43,25,.6);animation:controlPulse 2.5s ease-in-out infinite;
+  }
+  .control-display{
+    display:grid;flex:1;grid-template-columns:minmax(180px,42%) minmax(0,1fr);
+    grid-template-rows:minmax(0,1fr);min-height:0;overflow:hidden;
+  }
+  .control-visual{
+    position:relative;min-height:0;overflow:hidden;border-right:1px solid #000;background:#080706;
+  }
+  .control-visual:after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px),
+      linear-gradient(90deg,rgba(7,6,5,.08),rgba(7,6,5,.34)),
+      radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.42) 100%);
+  }
+  .control-shot{
+    display:block;width:100%;height:100%;min-height:0;object-fit:cover;
+    filter:saturate(.72) contrast(1.05) brightness(.78);
+  }
+  .control-shot:not([hidden]){animation:shotIn .38s ease both}
+  .control-shot[hidden],.control-fallback[hidden]{display:none}
+  .control-fallback{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:5px;padding:18px;text-align:center;color:#766c5f;
+    background:
+      linear-gradient(135deg,transparent 45%,rgba(120,20,14,.10) 46% 48%,transparent 49%) 0 0/34px 34px,
+      radial-gradient(ellipse at center,#17100d,#070605 72%);
+  }
+  .control-fallback:after{
+    content:"";position:absolute;left:0;right:0;height:1px;top:20%;background:rgba(151,49,27,.22);
+    box-shadow:0 0 8px rgba(151,49,27,.18);animation:fallbackScan 4.5s linear infinite;
+  }
+  .control-fallback b{position:relative;z-index:1;color:#aa9c88;font:14px/1 "Share Tech Mono",monospace;letter-spacing:1px}
+  .control-fallback span{position:relative;z-index:1;font-size:9px;letter-spacing:1.7px;text-transform:uppercase}
+  .control-info{display:flex;min-width:0;flex-direction:column;justify-content:center;padding:17px 19px}
+  .control-kind{color:#a24b38;font-size:9px;font-weight:700;letter-spacing:2.1px;text-transform:uppercase}
+  .control-info h3{
+    margin:4px 0 7px;color:#e0d3bd;font-family:"Rajdhani",Verdana,sans-serif;
+    font-size:22px;line-height:1.02;letter-spacing:.8px;text-transform:uppercase;
+  }
+  .control-info p{margin:0;color:#aaa08f;line-height:1.48}
+  .control-command{
+    appearance:none;display:flex;align-items:center;align-self:flex-start;max-width:100%;
+    margin-top:12px;padding:8px 10px;border:1px solid #2e251e;background:#080706;color:#cfb27f;
+    box-shadow:inset 0 0 0 1px #17120f;cursor:pointer;touch-action:manipulation;
+    font:11px/1.2 "Share Tech Mono","Courier New",monospace;text-align:left;word-break:break-word;
+    transition:color .16s ease,border-color .16s ease,background-color .16s ease,box-shadow .16s ease;
+  }
+  .control-command:before{content:">";margin-right:8px;color:#a52b19}
+  .control-command:hover,.control-command:focus-visible{
+    color:#f0d8a6;border-color:#6b4630;background:#100c09;outline:0;
+    box-shadow:inset 0 0 0 1px #34261d,0 0 12px rgba(128,36,20,.16);
+  }
+  .control-command.copied{color:#e9dbc4;border-color:#71503a;background:#19100c}
+  .control-command.copied:before{content:"✓";color:#bb5b3d}
+  .control-copy-state{color:#9c5b45;min-width:58px;text-align:right}
+  .control-note{margin:8px 0 0;color:#756c60;font-size:10px}
+
+  @keyframes terminalScan{from{transform:translateY(0)}to{transform:translateY(470px)}}
+  @keyframes fallbackScan{from{transform:translateY(-40px)}to{transform:translateY(170px)}}
+  @keyframes controlSweep{0%,25%{transform:translateX(-65%)}75%,100%{transform:translateX(65%)}}
+  @keyframes controlPulse{50%{opacity:.42;box-shadow:0 0 3px rgba(170,43,25,.25)}}
+  @keyframes choiceIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:translateX(0)}}
+  @keyframes screenSwap{0%{opacity:.68;transform:translateY(2px)}100%{opacity:1;transform:none}}
+  @keyframes shotIn{from{opacity:0;transform:scale(1.018)}to{opacity:1;transform:scale(1)}}
+
+  @media(max-width:700px){
+    .control-titlebar{align-items:flex-start}
+    .control-id{display:none}
+    .control-tabs{grid-template-columns:repeat(2,1fr)}
+    .control-tab:nth-child(2){border-right:0}
+    .control-tab:nth-child(-n+2){border-bottom:1px solid #000}
+    .control-main{grid-template-columns:1fr}
+    .control-selector{border-right:0;border-bottom:1px solid #000}
+    .control-pane{max-height:260px;padding:6px}
+    .control-choice{min-height:44px;padding:7px 9px}
+    .control-display{grid-template-columns:1fr}
+    .control-visual{min-height:168px;max-height:220px;border-right:0;border-bottom:1px solid #000}
+    .control-shot{min-height:168px;max-height:220px}
+    .control-info{padding:15px 16px}
+    .control-command{min-height:44px}
+  }
+  @media(max-width:460px){
+    .grapple-tip{grid-template-columns:auto 1fr;gap:9px;padding:10px 11px}
+    .grapple-state{grid-column:2;font-size:8px}
+    .grapple-copy span{font-size:10px}
+    .control-titlebar p{font-size:11px}
+    .control-tab{min-height:48px;padding:8px 5px;letter-spacing:1.25px}
+    .control-selector-head{padding:8px}
+    .control-pane{max-height:238px}
+    .control-info h3{font-size:20px}
+    .control-screen-head,.control-screen-foot{padding:0 8px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .grapple-tip:after,.control-shell:before,.control-led:before,.control-fallback:after{animation:none}
+    .control-choice,.control-screen.switching,.control-shot:not([hidden]){animation:none}
+    .control-tab,.control-choice,.control-command{transition:none}
+  }
+
+  /* ---- arena search + filters ---- */
+  .control-map-filter{
+    display:flex;align-items:center;gap:8px;padding:7px 8px;border-bottom:1px solid #000;
+    background:linear-gradient(180deg,#0d0b09,#090807);
+  }
+  .control-map-filter label{
+    flex:0 0 auto;color:#6f665a;font:8px/1 "Share Tech Mono","Courier New",monospace;
+    letter-spacing:1px;
+  }
+  .control-map-filter input{
+    min-width:0;width:100%;height:30px;box-sizing:border-box;border:1px solid #241d18;
+    background:#070605;color:#c6b9a4;padding:4px 8px;outline:0;
+    font:10px/1 "Share Tech Mono","Courier New",monospace;
+  }
+  .control-map-filter input::placeholder{color:#5c544a}
+  .control-map-filter input:focus{border-color:#70402e;box-shadow:0 0 0 1px #3a251c}
+
+  .control-choice[hidden]{display:none}
+  .control-shell:not(.view-map) .control-map-filter,
+  .control-shell:not(.view-map) .control-map-categories,
+  .control-shell:not(.view-map) .control-map-sources{display:none}
+  @media(max-width:700px){
+    .control-map-filter input{height:36px;font-size:11px}
+  }
+
+  /* ---- server reference layout: selector list + contextual detail pane ---- */
+  .control-shell:not(.view-map) .control-screen{
+    display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden;
+  }
+  .control-shell:not(.view-map) .control-main{grid-template-columns:255px minmax(0,1fr)}
+  .control-shell:not(.view-map) .control-selector{border-right:1px solid #000;border-bottom:0}
+  .control-shell:not(.view-map) .control-pane.active{
+    display:grid;grid-template-columns:1fr;gap:3px;max-height:318px;overflow:auto;padding:7px;
+  }
+  .control-shell:not(.view-map) .control-visual{display:none}
+  .control-shell:not(.view-map) .control-display{
+    display:block;flex:1 1 auto;min-height:0;overflow:hidden;grid-template-columns:1fr;
+  }
+  .control-shell:not(.view-map) .control-info{
+    justify-content:flex-start;box-sizing:border-box;min-height:0;height:100%;max-height:none;
+    padding-top:20px;overflow-x:hidden;overflow-y:scroll;overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;touch-action:pan-y;
+  }
+  .control-detail{color:#aaa08f;line-height:1.48}
+  .control-info .control-detail p{margin:8px 0}
+  .control-info .control-detail p:first-child{margin-top:0}
+  .control-info .control-detail p:last-child{margin-bottom:0}
+  .control-detail pre{white-space:pre-wrap;overflow-wrap:anywhere}
+  .control-detail table.data{margin-top:10px}
+  @media(max-width:700px){
+    .control-shell:not(.view-map) .control-main{grid-template-columns:1fr}
+    .control-shell:not(.view-map) .control-selector{border-right:0;border-bottom:1px solid #000}
+    .control-shell:not(.view-map) .control-pane.active{max-height:260px}
+  }
+
+  /* ---- server reference tabs ---- */
+  .control-subtabs{
+    position:relative;z-index:5;display:grid;grid-template-columns:repeat(3,1fr);
+    border-bottom:1px solid #000;background:linear-gradient(180deg,#120f0c,#0b0908);
+  }
+  .control-subtabs[hidden]{display:none!important}
+  .control-subtab{
+    appearance:none;min-width:0;min-height:34px;padding:6px 8px;border:0;border-right:1px solid #000;
+    background:transparent;color:#6f665a;cursor:pointer;touch-action:manipulation;
+    font:700 8px/1.15 "Rajdhani",Verdana,sans-serif;letter-spacing:1.4px;text-transform:uppercase;
+    transition:color .18s ease,background-color .18s ease,box-shadow .18s ease;
+  }
+  .control-subtab:last-child{border-right:0}
+  .control-subtab small{
+    display:block;margin-top:2px;color:#514a42;font:7px/1 "Share Tech Mono","Courier New",monospace;
+    letter-spacing:.5px;
+  }
+  .control-subtab:hover,.control-subtab:focus-visible{color:#d5c9b4;background:rgba(115,45,27,.10);outline:0}
+  .control-subtab:focus-visible{box-shadow:inset 0 0 0 2px #70402e}
+  .control-subtab.active{
+    color:#e8d9c2;background:linear-gradient(180deg,#211711,#120d0a);
+    box-shadow:inset 0 -2px 0 var(--rust);
+  }
+  .control-subtab.active small{color:#93604c}
+  @media(max-width:700px){
+    .control-tab:nth-child(-n+2){border-bottom:0}
+    .control-subtab{min-height:40px;padding:7px 5px;letter-spacing:1px}
+  }
+
+  /* ---- fixed workstation + Quake name builder ---- */
+  .control-main{height:430px;min-height:0}
+  .control-selector{display:flex;flex-direction:column;min-height:0}
+  .control-pane,
+  .control-shell:not(.view-map) .control-pane.active{
+    flex:1;min-height:0;max-height:none;overflow:auto;
+  }
+  .control-screen{
+    display:flex;flex-direction:column;height:100%;min-height:0;
+  }
+  .control-screen-head,.control-screen-foot{flex:0 0 auto}
+  .control-display{
+    flex:1;min-height:0;overflow:hidden;grid-template-rows:minmax(0,1fr);
+  }
+  .control-info,
+  .control-shell:not(.view-map) .control-info{
+    box-sizing:border-box;min-height:0;height:100%;max-height:100%;
+    overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
+    scrollbar-width:thin;scrollbar-color:#49382b #0b0908;
+    -webkit-overflow-scrolling:touch;touch-action:pan-y;
+  }
+  .control-visual{min-height:0}
+  .control-shot{min-height:0;height:100%}
+
+  .q3-name-tool{
+    margin:12px 0;padding:10px;border:1px solid #2d251e;background:#0a0807;
+    box-shadow:inset 0 0 0 1px #1d1712;
+  }
+  .q3-name-tool label{
+    display:block;margin-bottom:5px;color:#9d927f;font-size:9px;font-weight:700;
+    letter-spacing:1.3px;text-transform:uppercase;
+  }
+  .q3-name-input{
+    width:100%;box-sizing:border-box;padding:8px;border:1px solid #33291f;background:#070605;
+    color:#ddd0ba;outline:0;font:12px/1.2 "Share Tech Mono","Courier New",monospace;
+  }
+  .q3-name-input:focus{border-color:#70402e;box-shadow:0 0 0 1px #3a251c}
+  .q3-color-row{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:7px}
+  .q3-color{
+    appearance:none;height:28px;padding:0;border:1px solid #000;cursor:pointer;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);
+    font:700 9px/1 "Share Tech Mono","Courier New",monospace;
+  }
+  .q3-color[data-q3-color="0"]{background:#000;color:#aaa}
+  .q3-color[data-q3-color="1"]{background:#f00;color:#fff}
+  .q3-color[data-q3-color="2"]{background:#0f0;color:#000}
+  .q3-color[data-q3-color="3"]{background:#ff0;color:#000}
+  .q3-color[data-q3-color="4"]{background:#00f;color:#fff}
+  .q3-color[data-q3-color="5"]{background:#0ff;color:#000}
+  .q3-color[data-q3-color="6"]{background:#f0f;color:#fff}
+  .q3-color[data-q3-color="7"]{background:#fff;color:#000}
+  .q3-color:hover,.q3-color:focus-visible{outline:2px solid #8a4d32;outline-offset:1px}
+  .q3-name-actions{display:flex;gap:6px;margin-top:7px}
+  .q3-name-actions button,.q3-name-copy{
+    appearance:none;padding:6px 8px;border:1px solid #33291f;background:#120e0b;color:#b9aa95;
+    cursor:pointer;font:9px/1 "Share Tech Mono","Courier New",monospace;
+  }
+  .q3-name-actions button:hover,.q3-name-actions button:focus-visible,
+  .q3-name-copy:hover,.q3-name-copy:focus-visible{color:#f0e2cb;border-color:#70402e;outline:0}
+  .q3-name-preview{
+    min-height:24px;margin-top:8px;padding:8px;border:1px solid #241d18;background:#78736c;
+    color:#fff;font:700 16px/24px "Rajdhani",Verdana,sans-serif;letter-spacing:.5px;
+    text-shadow:0 1px 2px #000;
+  }
+  .q3-name-editor{
+    cursor:text;outline:0;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;
+    caret-color:#f0e2cb;
+  }
+  .q3-name-editor:focus{
+    border-color:#70402e;box-shadow:inset 0 0 0 1px #3a251c,0 0 0 1px #1a100c;
+  }
+  .q3-name-editor:empty:before{
+    content:"type a name";color:#5f574d;font-weight:400;pointer-events:none;
+  }
+  .q3-name-output{
+    display:flex;align-items:center;gap:7px;margin-top:6px;padding:6px 7px;border:1px solid #241d18;
+    background:#070605;
+  }
+  .q3-name-output code{min-width:0;flex:1;overflow-wrap:anywhere}
+  .q3-name-copy{flex:0 0 auto}
+  .q3-name-hint{margin:6px 0 0!important;color:#756c60!important;font-size:9px}
+
+  /* Keep Quake colors readable while selecting, then release the native highlight after applying. */
+  .q3-name-editor::selection{background:rgba(126,62,34,.38);color:inherit;text-shadow:0 1px 2px #000}
+  .q3-name-editor::-moz-selection{background:rgba(126,62,34,.38);color:inherit;text-shadow:0 1px 2px #000}
+
+  .control-map-categories{display:grid;gap:3px;padding:0 7px 7px;background:#0b0908}
+  .control-map-facet{display:flex;align-items:center;gap:3px;min-width:0}
+  .control-map-facet > span{
+    flex:0 0 35px;color:#585046;font:700 7px/1 "Share Tech Mono","Courier New",monospace;
+    letter-spacing:.6px
+  }
+  .control-map-category{
+    appearance:none;flex:1 1 0;min-width:0;min-height:22px;padding:3px 4px;border:1px solid #2b241d;background:#100d0b;
+    color:#71685d;cursor:pointer;font:700 7px/1 "Share Tech Mono","Courier New",monospace;
+    letter-spacing:.35px;text-transform:uppercase;
+  }
+  .control-map-category:hover,.control-map-category:focus-visible{color:#d6c8b2;border-color:#70402e;outline:0}
+  .control-map-category.active{color:#f0dfc7;border-color:#793521;background:#24120c;box-shadow:inset 0 -2px 0 var(--blood)}
+  .control-map-sources{
+    display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:5px 7px 6px;border-top:1px solid #17120f;
+    border-bottom:1px solid #000;background:#090706;font:7px/1.2 "Share Tech Mono","Courier New",monospace;
+  }
+  .control-map-sources span{color:#5f574d;letter-spacing:.7px}
+  .control-map-sources a{color:#a58e72;text-decoration:none;border-bottom:1px dotted #5e4938}
+  .control-map-sources a:hover,.control-map-sources a:focus-visible{color:#f0dfc7;border-color:#a55436;outline:0}
+
+  .control-dock{display:none;flex:0 0 auto;min-height:0}
+  .control-info.has-dock{overflow:hidden;padding-bottom:0}
+  .control-info.has-dock .control-detail{
+    flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;
+  }
+  .control-info.has-dock .control-dock{
+    display:block;flex:0 0 auto;margin-top:4px;padding-top:4px;
+    border-top:1px solid #2d251e;background:#070605;
+  }
+  .control-info.has-dock .control-dock .q3-name-tool{
+    margin:0;padding:5px;display:grid;
+    grid-template-columns:minmax(105px,.7fr) minmax(0,1.7fr);
+    grid-template-areas:"editor palette" "actions output";
+    gap:4px 6px;align-items:center;
+  }
+  .control-info.has-dock .control-dock .q3-name-tool > label{display:none}
+  .control-info.has-dock .control-dock .q3-name-editor{
+    grid-area:editor;margin:0;min-height:18px;padding:3px 6px;
+    font-size:14px;line-height:18px;
+  }
+  .control-info.has-dock .control-dock .q3-color-row{
+    grid-area:palette;margin:0;gap:3px;
+  }
+  .control-info.has-dock .control-dock .q3-color{height:24px;font-size:8px}
+  .control-info.has-dock .control-dock .q3-name-actions{grid-area:actions;margin:0}
+  .control-info.has-dock .control-dock .q3-name-actions button{
+    width:100%;height:24px;padding:3px 5px;font-size:8px;white-space:nowrap;
+  }
+  .control-info.has-dock .control-dock .q3-name-output{
+    grid-area:output;min-height:24px;margin:0;padding:3px 5px;box-sizing:border-box;gap:5px;
+  }
+  .control-info.has-dock .control-dock .q3-name-output code{
+    font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .control-info.has-dock .control-dock .q3-name-copy{padding:3px 5px;font-size:8px}
+  .control-info.has-dock .control-dock .q3-name-hint{display:none}
+  .control-info.has-dock > .control-command{display:none}
+
+  /* Tabler Icons (MIT): small functional accents, kept inline so they inherit UI color. */
+  .ui-icon{
+    display:inline-block;flex:0 0 auto;width:16px;height:16px;vertical-align:-3px;
+    fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  }
+  .dlbox a.dl{display:flex;align-items:center;justify-content:center;gap:9px}
+  .dlbox a.dl .ui-icon{width:18px;height:18px}
+  .copy-address{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .qcon-hd b,.control-map-sources > span{display:inline-flex;align-items:center;gap:5px}
+  .qcon-hd .ui-icon,.control-map-sources .ui-icon{width:14px;height:14px}
+  .grapple-key .ui-icon{width:18px;height:18px}
+  .grapple-key span{font-size:9px;letter-spacing:.7px}
+  kbd{
+    display:inline-block;min-width:18px;padding:1px 5px;border:1px solid #4a4035;
+    border-bottom-color:#211a15;border-radius:2px;background:linear-gradient(180deg,#211c17,#100e0b);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 1px 0 #000;color:#d4c6af;
+    font:10px/1.5 "Share Tech Mono","Courier New",monospace;text-align:center;
+  }
+
+  @media(max-width:700px){
+    .ui-icon{width:17px;height:17px}
+    kbd{font-size:11px;padding:2px 6px}
+    /* Mobile gets view-specific proportions instead of squeezing every tab
+       into the same 245px selector row. Hidden server subtabs take no space. */
+    .control-subtabs[hidden]{display:none!important}
+    .control-main{height:700px;grid-template-rows:260px minmax(0,1fr)}
+    .control-shell.view-map .control-main{
+      height:780px;grid-template-rows:430px minmax(0,1fr);
+    }
+    .control-shell.view-match .control-main,
+    .control-shell.view-mode .control-main{
+      height:720px;grid-template-rows:300px minmax(0,1fr);
+    }
+    .control-shell.view-command .control-main{
+      height:720px;grid-template-rows:210px minmax(0,1fr);
+    }
+    .control-selector{min-height:0}
+    .control-pane,
+    .control-shell:not(.view-map) .control-pane.active{max-height:none}
+
+    /* Keep arena controls useful without stealing most of the map list. */
+    .control-map-filter{padding:5px 7px}
+    .control-map-filter input{height:34px}
+    .control-map-categories{gap:2px;padding:0 7px 5px}
+    .control-map-facet{gap:2px}
+    .control-map-category{min-height:31px;font-size:8px}
+    .control-map-sources{
+      flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;padding:5px 7px;
+      scrollbar-width:thin;-webkit-overflow-scrolling:touch;
+    }
+    .control-map-sources span,.control-map-sources a{flex:0 0 auto}
+
+    /* Touch-first name editor: large text selection and 4x2 color palette. */
+    .control-info.has-dock .control-dock{margin-top:5px;padding-top:5px}
+    .control-info.has-dock .control-dock .q3-name-tool{
+      grid-template-columns:110px minmax(0,1fr);
+      grid-template-areas:"editor editor" "palette palette" "actions output";
+      gap:6px;padding:7px;
+    }
+    .control-info.has-dock .control-dock .q3-name-editor{
+      min-height:34px;padding:6px 9px;font-size:18px;line-height:24px;
+      -webkit-user-select:text;user-select:text;
+    }
+    .control-info.has-dock .control-dock .q3-color-row{
+      grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;
+    }
+    .control-info.has-dock .control-dock .q3-color{height:40px;font-size:11px}
+    .control-info.has-dock .control-dock .q3-name-actions button{
+      height:42px;padding:6px;font-size:9px;
+    }
+    .control-info.has-dock .control-dock .q3-name-output{
+      min-height:42px;padding:5px 7px;
+    }
+    .control-info.has-dock .control-dock .q3-name-output code{
+      font-size:11px;
+    }
+    .control-info.has-dock .control-dock .q3-name-copy{
+      min-height:34px;padding:7px 9px;font-size:9px;
+    }
+  }
+  @media(max-width:380px){
+    .control-info.has-dock .control-dock .q3-name-tool{
+      grid-template-columns:1fr;
+      grid-template-areas:"editor" "palette" "actions" "output";
+    }
+  }
 </style>
 </head>
 <body>
@@ -798,7 +1393,10 @@
     Nothing to look up. Unzip it and play.</p>
 
     <div class="dlbox">
-      <a class="dl" href="https://146-181-50-29.sslip.io/pack/quake3-pack.zip">DOWNLOAD THE PACK</a>
+      <a class="dl" href="https://146-181-50-29.sslip.io/pack/quake3-pack.zip">
+        <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path><path d="M7 11l5 5l5 -5"></path><path d="M12 4l0 12"></path></svg>
+        <span>DOWNLOAD THE PACK</span>
+      </a>
       <div class="sz">COMPLETE WORKING CLIENT &#10013; 499.2 MB / 476.1 MIB</div>
       <div class="sz">USERNAME: PLAYER &#10013; ASK CROW FOR THE PASSWORD</div>
     </div>
@@ -831,13 +1429,17 @@
     <div class="step rv">
       <div class="hd"><span class="n">3</span>CONNECT</div>
       <div class="bd">
-        <p>Press <code>~</code> to open the console. That is the key left of the
-        <code>1</code>, above Tab. Type <code>connect</code> and then the address:</p>
+        <p>Press <kbd>~</kbd> to open the console. That is the key left of the
+        <kbd>1</kbd>, above <kbd>Tab</kbd>. Type <code>connect</code> and then the address:</p>
 
         <div class="addrbox">
           <div class="lbl">SERVER ADDRESS</div>
-          <div class="ip" id="serverAddress">146.181.50.29:27960</div>
-          <button class="copy-address" id="copyAddress" type="button">COPY ADDRESS</button>
+          <button class="ip" id="serverAddress" type="button" title="Copy server address"
+                  aria-label="Copy server address">146.181.50.29:27960</button>
+          <button class="copy-address" id="copyAddress" type="button">
+            <svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"></path><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"></path></svg>
+            <span>COPY CONNECT COMMAND</span>
+          </button>
           <span class="copy-status" id="copyStatus" aria-live="polite"></span>
         </div>
 
@@ -879,7 +1481,7 @@
           <div class="qcon" id="liveConsolePanel" aria-label="Live server console">
             <button class="qcon-hd" id="liveConsoleToggle" type="button"
                     aria-expanded="false" aria-controls="liveConsoleReveal">
-              <b>LIVE CONSOLE</b>
+              <b><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7l5 5l-5 5"></path><path d="M12 19l7 0"></path></svg>LIVE CONSOLE</b>
               <span>CHAT + FRAGS</span>
               <i class="qcon-toggle" aria-hidden="true"></i>
             </button>
@@ -897,26 +1499,136 @@
 
 
 
-        <p>If <code>~</code> does nothing on your keyboard, which is common outside the
+        <p>If <kbd>~</kbd> does nothing on your keyboard, which is common outside the
         US, forget the console. Go to <b>Multiplayer &#8594; Specify</b> in the menus and
         type the address there instead.</p>
         <p class="small">That is it. Everything else is already set up inside the pack.</p>
       </div>
     </div>
 
-    <h2><span class="mk">&#9642;</span>ONE THING TO KNOW</h2>
-    <div class="rule"></div>
-    <p><b class="hot">YOUR MIDDLE MOUSE BUTTON IS A GRAPPLING HOOK.</b> Hold it down to
-    fire, and it reels you in. It is switched on in nearly every mode on this server and
-    it is the main thing that makes this place feel different from normal Quake.
-    Use it constantly.</p>
+    <div class="grapple-tip rv" aria-label="Grappling hook quick tip">
+      <div class="grapple-key" aria-label="Middle mouse button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h-4a4 4 0 0 1 -4 -4l0 -10"></path><path d="M12 7l0 4"></path></svg><span>MMB</span></div>
+      <div class="grapple-copy">
+        <b>GRAPPLE SYSTEM</b>
+        <span>Hold middle mouse to fire. Keep holding to reel yourself in.</span>
+      </div>
+      <div class="grapple-state">ENABLED IN MOST PRESETS</div>
+    </div>
+
+    <section class="control-section rv" aria-labelledby="controlTitle">
+      <div class="control-titlebar">
+        <div>
+          <h2 id="controlTitle"><span class="mk">&#9642;</span>SERVER REFERENCE</h2>
+          <p>Browse arenas, match types and gameplay under Server / Game, or open Player
+          Guide for customization and useful console commands. Anyone can call a vote;
+          F1 votes yes and F2 votes no.</p>
+        </div>
+        <div class="control-id">SERVER / GAME // PLAYER GUIDE</div>
+      </div>
+      <div class="rule"></div>
+
+      <div class="control-shell view-map" id="serverControl">
+        <div class="control-tabs" role="tablist" aria-label="Server reference sections">
+          <button class="control-tab active" type="button" role="tab" aria-selected="true" data-terminal-main="server">
+            SERVER / GAME<small>3 CATEGORIES</small>
+          </button>
+          <button class="control-tab" type="button" role="tab" aria-selected="false" data-terminal-main="guide">
+            PLAYER GUIDE<small>5 TOPICS</small>
+          </button>
+        </div>
+        <div class="control-subtabs" id="serverSubtabs" role="tablist" aria-label="Server and game categories">
+          <button class="control-subtab active" type="button" role="tab" aria-selected="true" data-terminal-tab="map">
+            ARENAS<small>69 MAPS</small>
+          </button>
+          <button class="control-subtab" type="button" role="tab" aria-selected="false" data-terminal-tab="match">
+            MATCH TYPE<small>9 MODES</small>
+          </button>
+          <button class="control-subtab" type="button" role="tab" aria-selected="false" data-terminal-tab="mode">
+            GAMEPLAY<small>14 PRESETS</small>
+          </button>
+        </div>
+
+        <div class="control-main">
+          <aside class="control-selector">
+            <div class="control-selector-head">
+              <span id="terminalEyebrow">ARENA INDEX</span>
+              <span id="terminalCount">69 ENTRIES</span>
+            </div>
+            <div class="control-map-filter">
+              <label for="controlMapFilter">FILTER</label>
+              <input id="controlMapFilter" type="search" autocomplete="off" spellcheck="false"
+                     placeholder="map name or id" aria-label="Filter maps">
+            </div>
+            <div class="control-map-categories" id="controlMapCategories" aria-label="Map filters">
+              <div class="control-map-facet" role="group" aria-label="Map type">
+                <span>TYPE</span>
+                <button class="control-map-category active" type="button" data-map-type="all" aria-pressed="true">ALL</button>
+                <button class="control-map-category" type="button" data-map-type="arena" aria-pressed="false">ARENA/FFA</button>
+                <button class="control-map-category" type="button" data-map-type="ctf" aria-pressed="false">CTF</button>
+              </div>
+              <div class="control-map-facet" role="group" aria-label="Map source">
+                <span>SOURCE</span>
+                <button class="control-map-category active" type="button" data-map-source="all" aria-pressed="true">ALL</button>
+                <button class="control-map-category" type="button" data-map-source="id" aria-pressed="false">ID</button>
+                <button class="control-map-category" type="button" data-map-source="cpma" aria-pressed="false">CPMA</button>
+                <button class="control-map-category" type="button" data-map-source="other" aria-pressed="false">OTHER</button>
+              </div>
+            </div>
+            <div class="control-map-sources" aria-label="Places to find maps to suggest to Crow"
+                 title="Find a map you like, then send Crow its page link and map/BSP name.">
+              <span><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18.5l-3 -1.5l-6 3v-13l6 -3l6 3l6 -3v8.5"></path><path d="M9 4v13"></path><path d="M15 7v8"></path><path d="M16 19h6"></path><path d="M19 16v6"></path></svg>SUGGEST A MAP:</span>
+              <a href="https://lvlworld.com/" target="_blank" rel="noopener">LVLWORLD</a>
+              <a href="https://www.mapraider.com/maps/quake-3-arena" target="_blank" rel="noopener">MAPRAIDER</a>
+              <a href="https://www.moddb.com/games/quake-iii-arena/addons" target="_blank" rel="noopener">MODDB</a>
+              <a href="https://www.quake3world.com/forum/viewforum.php?f=10" target="_blank" rel="noopener">Q3WORLD</a>
+            </div>
+            <div class="control-pane active" id="controlMapChoices" data-terminal-pane="map" aria-label="Map rotation"></div>
+            <div class="control-pane" id="controlMatchChoices" data-terminal-pane="match" aria-label="Match types"></div>
+            <div class="control-pane" id="controlModeChoices" data-terminal-pane="mode" aria-label="Gameplay presets"></div>
+            <div class="control-pane" id="controlCommandChoices" data-terminal-pane="command" aria-label="Player guide"></div>
+          </aside>
+
+          <section class="control-screen" id="controlPreview" aria-live="polite">
+            <div class="control-screen-head">
+              <span id="terminalChannel">ARENA CHANNEL // 01</span>
+              <span class="control-led">ONLINE REFERENCE</span>
+            </div>
+            <div class="control-display">
+              <div class="control-visual">
+                <img class="control-shot" id="controlShot" alt="" referrerpolicy="no-referrer" hidden>
+                <div class="control-fallback" id="controlFallback">
+                  <b id="controlFallbackName">SELECT</b>
+                  <span id="controlFallbackText">awaiting selection</span>
+                </div>
+              </div>
+              <div class="control-info">
+                <div class="control-kind" id="controlKind"></div>
+                <h3 id="controlName"></h3>
+                <div class="control-detail" id="controlDesc"></div>
+                <div class="control-dock" id="controlDock"></div>
+                <button class="control-command" id="controlCommand" type="button" title="Copy command"></button>
+              </div>
+            </div>
+            <div class="control-screen-foot">
+              <span>CLICK COMMAND TO COPY</span>
+              <span class="control-copy-state" id="terminalCopyState" aria-live="polite"></span>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <p class="control-note">Server / Game contains Arenas, Match Type and Gameplay. Only
+      arenas use a levelshot; every other reference stays text-only with selection on the left
+      and details on the right.</p>
+    </section>
 
 
+    <div class="legacy-customize" hidden>
     <h2><span class="mk">&#9642;</span>MAKE IT YOURS</h2>
     <div class="rule"></div>
     <p class="small">All optional.</p>
 
-    <details class="fold">
+    <details class="fold" id="helpName">
       <summary>YOUR NAME, AND COLORING IT</summary>
       <div class="bd">
         <p>Set it in <b>Setup &#8594; Player</b>, or from the console at any time, even mid
@@ -930,6 +1642,33 @@
         <pre>/name ^1Crow
 /name ^1C^7row
 /name ^4x^5X^4x</pre>
+
+        <div class="q3-name-tool" data-q3-name-tool>
+          <label>QUICK COLOR NAME BUILDER</label>
+          <div class="q3-name-preview q3-name-editor" data-q3-editor contenteditable="true"
+               role="textbox" aria-multiline="false" aria-label="Editable colored Quake name"
+               spellcheck="false">Crow</div>
+          <div class="q3-color-row" aria-label="Quake color palette">
+            <button class="q3-color" type="button" data-q3-color="0" title="Black">^0</button>
+            <button class="q3-color" type="button" data-q3-color="1" title="Red">^1</button>
+            <button class="q3-color" type="button" data-q3-color="2" title="Green">^2</button>
+            <button class="q3-color" type="button" data-q3-color="3" title="Yellow">^3</button>
+            <button class="q3-color" type="button" data-q3-color="4" title="Blue">^4</button>
+            <button class="q3-color" type="button" data-q3-color="5" title="Cyan">^5</button>
+            <button class="q3-color" type="button" data-q3-color="6" title="Magenta">^6</button>
+            <button class="q3-color" type="button" data-q3-color="7" title="White">^7</button>
+          </div>
+          <div class="q3-name-actions">
+            <button type="button" data-q3-strip>REMOVE COLORS</button>
+          </div>
+          <div class="q3-name-output">
+            <code data-q3-output></code>
+            <button class="q3-name-copy" type="button" data-q3-copy>COPY</button>
+          </div>
+          <p class="q3-name-hint">Type directly in the colored name above. Select visible letters and click
+          a color to recolor them; the Quake <code>^N</code> command underneath is generated automatically.
+          With no selection, a color applies from the caret to the next existing color change.</p>
+        </div>
 
         <table class="data">
           <tr><th width="14%">CODE</th><th width="22%">COLOR</th><th>LOOKS LIKE</th></tr>
@@ -964,7 +1703,7 @@
       </div>
     </details>
 
-    <details class="fold">
+    <details class="fold" id="helpCharacter">
       <summary>PICKING A CHARACTER</summary>
       <div class="bd">
         <p><b>Setup &#8594; Player</b> has a portrait you can click through. From the console
@@ -992,7 +1731,7 @@
       </div>
     </details>
 
-    <details class="fold">
+    <details class="fold" id="helpChat">
       <summary>CHAT, TAUNTS AND THE SCOREBOARD</summary>
       <div class="bd">
         <table class="data">
@@ -1016,7 +1755,7 @@
       </div>
     </details>
 
-    <details class="fold">
+    <details class="fold" id="helpSettings">
       <summary>SETTINGS WORTH CHANGING</summary>
       <div class="bd">
         <p>None of this is required. Type them into the console, or put them in your config
@@ -1043,26 +1782,7 @@
         </table>
       </div>
     </details>
-
-    <details class="fold">
-      <summary>CHANGING THE MAP AND THE RULES</summary>
-      <div class="bd">
-        <p>You do not need an admin. Anyone can call a vote, everyone else presses F1 for yes
-        or F2 for no:</p>
-
-        <pre>/callvote map q3dm6
-/callvote timelimit 15
-/callvote restart</pre>
-
-        <p>You can also vote for a completely different set of weapon rules. The gameplay
-        changes instantly, with no map change and nothing to reconnect:</p>
-
-        <pre>/callvote config instagib</pre>
-
-        <p class="small">Try <code>chaos</code>, <code>sumo</code> and <code>zerog</code> as
-        well. Each is worth seeing at least once.</p>
-      </div>
-    </details>
+    </div>
 
     <h2><span class="mk">&#9642;</span>IF SOMETHING GOES WRONG</h2>
     <div class="rule"></div>
@@ -1250,16 +1970,15 @@
 })();
 </script>
 <script>
-/* Copy the join address without making the console instructions mandatory. */
+/* Copy either the raw address or a console-ready connect command. */
 (function(){
   var button = document.getElementById('copyAddress');
   var address = document.getElementById('serverAddress');
   var status = document.getElementById('copyStatus');
   if(!button || !address || !status) return;
-  button.addEventListener('click', function(){
-    var value = address.textContent.trim();
-    function done(){ status.textContent = 'COPIED'; }
-    function failed(){ status.textContent = 'COPY FAILED — SELECT THE ADDRESS ABOVE'; }
+  function copyText(value,message){
+    function done(){ status.textContent = message; }
+    function failed(){ status.textContent = 'COPY FAILED'; }
     if(navigator.clipboard && window.isSecureContext){
       navigator.clipboard.writeText(value).then(done, failed);
       return;
@@ -1270,13 +1989,20 @@
     document.body.appendChild(area); area.select();
     try{ document.execCommand('copy') ? done() : failed(); }catch(e){ failed(); }
     document.body.removeChild(area);
+  }
+  address.addEventListener('click', function(){
+    copyText(address.textContent.trim(),'ADDRESS COPIED');
+  });
+  button.addEventListener('click', function(){
+    copyText('connect ' + address.textContent.trim(),'CONNECT COMMAND COPIED');
   });
 })();
 </script>
 <script>
 /* Live server status.
  *
- * Reads JSON published on the game box every 15 seconds. The endpoint has to
+ * Reads status JSON every 3 seconds and the open console feed every second.
+ * The endpoint has to
  * be https: this page is served over TLS and a secure page may not fetch an
  * http:// URL.
  *
@@ -1288,8 +2014,8 @@
   var BASE = 'https://146-181-50-29.sslip.io/status/';
   var ENDPOINT = BASE + 'status.json';
   var EVENT_ENDPOINT = BASE + 'events.json';
-  var EVERY = 15000;
-  var EVENT_EVERY = 2500;
+  var EVERY = 3000;
+  var EVENT_EVERY = 1000;
   var CLIP = 'img/g_overview.gif';
 
   /* Quake name colors, lifted until every one clears 4.5:1 against the row
@@ -1309,6 +2035,8 @@
 
   var lastOk = 0;
   var heldFor = 0;
+  var statusInFlight = false;
+  var eventInFlight = false;
   var consoleBox = document.getElementById('liveConsole');
   var consolePanel = document.getElementById('liveConsolePanel');
   var consoleToggle = document.getElementById('liveConsoleToggle');
@@ -1421,7 +2149,8 @@
   }
 
   function pollConsole(){
-    if(!window.fetch || !consoleBox) return;
+    if(!window.fetch || !consoleBox || eventInFlight) return;
+    eventInFlight = true;
     fetch(EVENT_ENDPOINT, {cache:'no-store'})
       .then(function(response){
         if(!response.ok) throw new Error(response.status);
@@ -1431,7 +2160,8 @@
       .catch(function(){
         consoleBox.innerHTML = '<div class="qcon-empty">server feed unavailable</div>'
           + '<div class="qcon-prompt">_</div>';
-      });
+      })
+      .then(function(){ eventInFlight = false; });
   }
 
   function offline(msg){
@@ -1538,10 +2268,13 @@
 
   function poll(){
     if(!window.fetch){ offline('UNSUPPORTED BROWSER'); return; }
+    if(statusInFlight) return;
+    statusInFlight = true;
     fetch(ENDPOINT, {cache:'no-store'})
       .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
       .then(render)
-      .catch(function(){ offline('STATUS UNAVAILABLE'); });
+      .catch(function(){ offline('STATUS UNAVAILABLE'); })
+      .then(function(){ statusInFlight = false; });
   }
 
   /* Don't poll a tab nobody is looking at. Refresh the moment it comes back,
@@ -1594,6 +2327,674 @@
   poll();
   start();
   setInterval(tick, 1000);
+})();
+</script>
+<script>
+/* Server reference: arenas, match types, gameplay presets and player guide. */
+(function(){
+  var mapRoot = document.getElementById('controlMapChoices');
+  var matchRoot = document.getElementById('controlMatchChoices');
+  var modeRoot = document.getElementById('controlModeChoices');
+  var commandRoot = document.getElementById('controlCommandChoices');
+  var preview = document.getElementById('controlPreview');
+  if(!mapRoot || !matchRoot || !modeRoot || !commandRoot || !preview) return;
+
+  var maps = [
+    {id:"q3dm6",name:"The Camping Grounds",desc:"Classic id arena with layered routes, jump pads and strong central control."},
+    {id:"q3tourney4",name:"Vertical Vengeance",desc:"A stacked tournament arena built around height changes, catwalks and fast route switching."},
+    {id:"q3dm7",name:"Temple of Retribution",desc:"Broad gothic rooms, multiple levels and enough space for chaotic free-for-all fights."},
+    {id:"q3dm17",name:"The Longest Yard",desc:"An exposed space arena made for rail shots, jump pads and dangerous falls."},
+    {id:"cpm3",name:"CPM3",desc:"A classic CPMA arena in the rotation, built around fast movement, item timing and route control."},
+    {id:"cpm22",name:"CPM22",desc:"A competitive CPMA arena selected for fast routing and movement-heavy fights."},
+    {id:"q3tourney2",name:"The Proving Grounds",desc:"A compact tournament layout with short routes and frequent close encounters."},
+    {id:"cpm1a",name:"CPM1A",desc:"A compact CPMA rotation map focused on movement, positioning and item control."},
+    {id:"cpm11a",name:"CPM11A",desc:"A CPMA arena with quick routes and the movement-heavy pacing this rotation favors."},
+    {id:"cpm15",name:"CPM15",desc:"A competitive CPMA map where route choice, timing and momentum matter as much as aim."},
+    {id:"cpm18",name:"CPM18",desc:"A fast CPMA rotation arena suited to aggressive movement and constant repositioning."},
+    {id:"cpm24",name:"CPM24",desc:"A CPMA arena chosen for high-speed fights, route control and strong movement options."},
+    {id:"cpm27",name:"CPM27",desc:"A competitive CPMA rotation map built for rapid engagements and movement control."},
+    {id:"cpm9",name:"CPM9",desc:"A compact CPMA arena that rewards clean movement, positioning and item timing."},
+    {id:"cpm21",name:"CPM21",desc:"A CPMA rotation arena focused on fast traversal and repeated control fights."},
+    {id:"cpm14",name:"CPM14",desc:"A competitive CPMA map with the quick movement and route pressure typical of the set."},
+    {id:"q3dm12",name:"The Dredwerkz",desc:"An industrial-gothic arena with interconnected rooms, elevation changes and heavy pressure."},
+    {id:"q3dm13",name:"Lost World",desc:"Tight dark corridors and stacked rooms that reward prediction, positioning and route control."},
+    {id:"q3dm14",name:"Grim Dungeons",desc:"A dense gothic arena with several levels, hazards and frequent close-range fights."},
+    {id:"q3dm15",name:"Demon Keep",desc:"A large infernal arena with long routes, lava hazards and room for bigger battles."},
+    {id:"simpsons_q3",name:"Simpsons Q3",desc:"A Simpsons-themed custom arena that breaks up the darker maps with a much stranger setting."},
+    {id:"haunted",name:"Haunted",desc:"A horror-themed custom arena in the rotation."},
+    {id:"mxl_school",name:"MXL School",desc:"A school-themed custom arena in the rotation."},
+    {id:"ved",name:"VED",desc:"A custom community arena included in the server rotation."},
+    {id:"spank_dhremix",name:"Spank DH Remix",desc:"A custom remix arena included in the rotation."},
+    {id:"q3ctf1",name:"Dueling Keeps",desc:"Two compact bases split by a contested courtyard; simple routes make flag pressure immediate."},
+    {id:"q3ctf4",name:"Space CTF",desc:"Opposing bases spread across exposed floating platforms, jump routes and a lethal void."}
+  ];
+  ("q3dm0 q3dm1 q3dm2 q3dm3 q3dm4 q3dm5 q3dm8 q3dm9 q3dm10 q3dm11 q3dm16 q3dm18 q3dm19 " +
+   "q3ctf2 q3ctf3 q3tourney6_ctf cpmctf1 cpmctf2 cpmctf3 cpmctf4 cpmctf5 cpm2 cpm4 cpm4a cpm5 cpm6 " +
+   "cpm7 cpm8 cpm10 cpm11 cpm12 cpm13 cpm16 cpm17 cpm18r cpm19 cpm20 cpm23 cpm25 cpm26 cpm28 cpm29").split(" ").forEach(function(id){
+    maps.push({id:id,name:id.toUpperCase().replace(/_/g," "),desc:"Additional arena installed on this server."});
+  });
+  var matchTypes = [
+    {id:"ffa",name:"Free For All",desc:"Everyone fights everyone."},
+    {id:"duel",name:"Duel",desc:"One-on-one tournament play."},
+    {id:"tdm",name:"Team Deathmatch",desc:"Teams compete for total frags."},
+    {id:"ctf",name:"Capture the Flag",desc:"Classic two-team flag capture."},
+    {id:"rtf",name:"Return the Flag",desc:"A modified flag-based team mode."},
+    {id:"onectf",name:"One Flag CTF",desc:"Both teams contest a neutral flag."},
+    {id:"ca",name:"Clan Arena",desc:"Team rounds with prepared loadouts and no normal item collection."},
+    {id:"freeze",name:"Freeze Tag",desc:"Defeated players freeze and teammates can thaw them."},
+    {id:"ptl",name:"Protect the Leader",desc:"Teams defend their leader while attacking the opponent's."}
+  ];
+  var modes = [
+    {id:"asymmetry",name:"Asymmetric Teams",desc:"Red are fast, fragile snipers; blue are slower, tougher close-range bruisers."},
+    {id:"baseq3",name:"Standard Quake III",desc:"Standard Quake III weapons, health, armor, ammunition and movement."},
+    {id:"chaos",name:"Explosive Chaos",desc:"Explosive deaths, weapon-dependent movement speed, strong self-propulsion and chain reactions."},
+    {id:"excessive1",name:"Rocket-Start Excessive",desc:"Powerful weapons, 300 health and ammunition pickups."},
+    {id:"excessive2",name:"Regenerating Excessive",desc:"Full-arsenal Excessive combat with 300 health and health regeneration."},
+    {id:"excessive3",name:"Alternate Excessive",desc:"Full arsenal with a different weapon-damage and knockback balance."},
+    {id:"excessive4",name:"Default Rotation",desc:"Broad starting arsenal, high health and extremely fast combat."},
+    {id:"excessive5",name:"Legacy Excessive",desc:"Configurable legacy preset with optional instant rail and special space-map BFG behavior."},
+    {id:"grapple",name:"Offhand Grapple",desc:"Mostly standard combat with a fast, zero-damage offhand grappling hook."},
+    {id:"instachaos",name:"Quad-Rail Shotgun",desc:"Four spread-out instant-kill rail beams fired simultaneously from a modified shotgun."},
+    {id:"instagib",name:"One-Shot Rail",desc:"Railgun-only combat where one accurate shot kills."},
+    {id:"intercept",name:"Projectile Interception",desc:"Hitscan weapons can destroy rockets, grenades, plasma and BFG projectiles in flight."},
+    {id:"sumo",name:"Knockback Only",desc:"Weapons cause knockback but no damage; win by knocking opponents into hazards or the void."},
+    {id:"zerog",name:"Flight + Low Gravity",desc:"Permanent flight and reduced gravity with full three-dimensional movement."}
+  ];
+  var commands = [
+    {id:"name",name:"NAME & COLORS",command:"/name Crow",desc:"Change your name and use Quake III color codes.",group:"IDENTITY",help:"helpName"},
+    {id:"characters",name:"CHARACTERS & SKINS",command:"/model sarge",desc:"Choose a body, head and optional server color skin.",group:"MODEL",help:"helpCharacter"},
+    {id:"chat",name:"CHAT, TAUNTS & SCOREBOARD",command:"/bind MOUSE4 \"+button3\"",desc:"Chat keys, scoreboard controls, color codes and the taunt bind.",group:"INPUT",help:"helpChat"},
+    {id:"settings",name:"SETTINGS & NETWORK",command:"/cg_fov 110",desc:"Useful view, performance, network and screenshot settings.",group:"CLIENT",help:"helpSettings"},
+    {id:"votes",name:"VOTES & SPECTATING",command:"/callvote restart",desc:"Call simple votes or sit out without disconnecting.",group:"SERVER",detail:"<p>Anyone can call a vote. Other players press <b>F1</b> for yes or <b>F2</b> for no.</p><pre>/callvote timelimit 15\n/callvote restart</pre><p>You can also sit out without disconnecting, then return when you want.</p><pre>/team spectator\n/team free</pre>"}
+  ];
+
+  var roots = {map:mapRoot,match:matchRoot,mode:modeRoot,command:commandRoot};
+  var sets = {map:maps,match:matchTypes,mode:modes,command:commands};
+  var meta = {
+    map:{eyebrow:"ARENA INDEX",count:"69 ENTRIES",channel:"ARENA CHANNEL"},
+    match:{eyebrow:"MATCH PROTOCOLS",count:"9 ENTRIES",channel:"MATCH CHANNEL"},
+    mode:{eyebrow:"GAMEPLAY RULESETS",count:"14 ENTRIES",channel:"RULESET CHANNEL"},
+    command:{eyebrow:"PLAYER GUIDE",count:"5 TOPICS",channel:"GUIDE CHANNEL"}
+  };
+
+  var mainTabs = document.querySelectorAll('[data-terminal-main]');
+  var tabs = document.querySelectorAll('[data-terminal-tab]');
+  var panes = document.querySelectorAll('[data-terminal-pane]');
+  var shell = document.getElementById('serverControl');
+  var subtabBar = document.getElementById('serverSubtabs');
+  var mapFilter = document.getElementById('controlMapFilter');
+  var mapTypeButtons = document.querySelectorAll('[data-map-type]');
+  var mapSourceButtons = document.querySelectorAll('[data-map-source]');
+  var activeMapType = 'all';
+  var activeMapSource = 'all';
+  var eyebrow = document.getElementById('terminalEyebrow');
+  var count = document.getElementById('terminalCount');
+  var channel = document.getElementById('terminalChannel');
+  var shot = document.getElementById('controlShot');
+  var fallback = document.getElementById('controlFallback');
+  var fallbackName = document.getElementById('controlFallbackName');
+  var fallbackText = document.getElementById('controlFallbackText');
+  var kind = document.getElementById('controlKind');
+  var name = document.getElementById('controlName');
+  var desc = document.getElementById('controlDesc');
+  var dock = document.getElementById('controlDock');
+  var info = desc && desc.parentNode;
+  var commandButton = document.getElementById('controlCommand');
+  var copyState = document.getElementById('terminalCopyState');
+  var selected = {};
+  var serverType = 'map';
+  var shotToken = 0;
+  var copyTimer = null;
+
+  function commandFor(item,type){
+    if(type === 'map') return '/callvote map ' + item.id;
+    if(type === 'match') return '/callvote gametype ' + item.id;
+    if(type === 'mode') return '/callvote config ' + item.id;
+    return item.command;
+  }
+  function showFallback(label,text){
+    shotToken++;
+    shot.onload = null;
+    shot.onerror = null;
+    shot.hidden = true;
+    shot.removeAttribute('src');
+    fallback.hidden = false;
+    fallbackName.textContent = label;
+    fallbackText.textContent = text;
+  }
+  function liveLevelshot(item){
+    var liveMap = document.getElementById('liveMap');
+    var liveShot = document.getElementById('liveShot');
+    if(!liveMap || !liveShot) return '';
+    if(liveMap.textContent.trim().toLowerCase() !== item.id.toLowerCase()) return '';
+    var bg = liveShot.style.backgroundImage || '';
+    if(bg.slice(0,4) !== 'url(' || bg.charAt(bg.length - 1) !== ')') return '';
+    return bg.slice(4,-1).replace(/^["']|["']$/g,'');
+  }
+  function loadShot(item){
+    var token = ++shotToken;
+    var lower = item.id;
+    var upper = item.id.toUpperCase();
+    var sources = [];
+    var live = liveLevelshot(item);
+    if(live) sources.push(live);
+    sources.push('img/maps/' + lower + '.jpg');
+    if(upper !== lower) sources.push('img/maps/' + upper + '.jpg');
+    sources.push('https://efservers.com/levelshots/' + encodeURIComponent(lower) + '.jpg');
+    if(upper !== lower) sources.push('https://efservers.com/levelshots/' + encodeURIComponent(upper) + '.jpg');
+    var i = 0;
+    fallback.hidden = false;
+    fallbackName.textContent = item.id.toUpperCase();
+    fallbackText.textContent = 'loading levelshot';
+    shot.hidden = true;
+    shot.alt = item.name + ' levelshot';
+    shot.onload = function(){
+      if(token !== shotToken) return;
+      fallback.hidden = true;
+      shot.hidden = false;
+    };
+    shot.onerror = function(){
+      if(token !== shotToken) return;
+      i++;
+      if(i < sources.length) shot.src = sources[i];
+      else showFallback(item.id.toUpperCase(),'levelshot unavailable');
+    };
+    shot.src = sources[0];
+  }
+  function animateScreen(){
+    preview.classList.remove('switching');
+    void preview.offsetWidth;
+    preview.classList.add('switching');
+  }
+  function initNameBuilder(root){
+    var tool = root.querySelector('[data-q3-name-tool]');
+    if(!tool) return;
+    var editor = tool.querySelector('[data-q3-editor]');
+    var output = tool.querySelector('[data-q3-output]');
+    var copy = tool.querySelector('[data-q3-copy]');
+    var strip = tool.querySelector('[data-q3-strip]');
+    var colors = ['#000','#f00','#0f0','#ff0','#00f','#0ff','#f0f','#fff'];
+    if(!editor || !output) return;
+
+    var chars = [];
+    var lastSelection = {start:0,end:0};
+
+    function serializeName(items){
+      var out = '', active = 7;
+      items.forEach(function(item){
+        if(item.color !== active){
+          out += '^' + item.color;
+          active = item.color;
+        }
+        out += item.ch;
+      });
+      return out;
+    }
+
+    /* Read visible text back out of the contenteditable while preserving the
+       color carried by each generated span. Text the browser inserts inside a
+       colored span naturally inherits that span's Quake color. */
+    function readEditor(){
+      var out = [];
+      function walk(node,inherited){
+        if(node.nodeType === 3){
+          String(node.nodeValue || '').replace(/[\r\n]/g,'').split('').forEach(function(ch){
+            out.push({ch:ch,color:inherited});
+          });
+          return;
+        }
+        if(node.nodeType !== 1) return;
+        var own = node.getAttribute && node.getAttribute('data-q3-run');
+        var color = own !== null && /^[0-7]$/.test(own) ? parseInt(own,10) : inherited;
+        if(node.tagName === 'BR') return;
+        [].forEach.call(node.childNodes,function(child){ walk(child,color); });
+      }
+      [].forEach.call(editor.childNodes,function(node){ walk(node,7); });
+      return out;
+    }
+
+    function selectionOffsets(){
+      var sel = window.getSelection && window.getSelection();
+      if(!sel || !sel.rangeCount) return null;
+      var range = sel.getRangeAt(0);
+      if(!editor.contains(range.startContainer) || !editor.contains(range.endContainer)) return null;
+      function offsetAt(container,offset){
+        var before = document.createRange();
+        before.selectNodeContents(editor);
+        try{ before.setEnd(container,offset); }
+        catch(e){ return 0; }
+        return before.toString().replace(/[\r\n]/g,'').length;
+      }
+      var start = offsetAt(range.startContainer,range.startOffset);
+      var end = offsetAt(range.endContainer,range.endOffset);
+      return {
+        start:Math.max(0,start),
+        end:Math.max(0,end)
+      };
+    }
+
+    function pointAt(target){
+      var walker = document.createTreeWalker(editor,NodeFilter.SHOW_TEXT,null);
+      var left = Math.max(0,target), node, last = null;
+      while((node = walker.nextNode())){
+        last = node;
+        var len = node.nodeValue.length;
+        if(left <= len) return {node:node,offset:left};
+        left -= len;
+      }
+      if(last) return {node:last,offset:last.nodeValue.length};
+      return {node:editor,offset:0};
+    }
+
+    function restoreSelection(start,end){
+      var a = pointAt(start), b = pointAt(end);
+      var range = document.createRange();
+      range.setStart(a.node,a.offset);
+      range.setEnd(b.node,b.offset);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      lastSelection = {start:start,end:end};
+    }
+
+    function saveSelection(){
+      var current = selectionOffsets();
+      if(current) lastSelection = current;
+    }
+    function capturePaletteSelection(){
+      var current = selectionOffsets();
+      if(!current) return;
+      if(current.end > current.start || lastSelection.end <= lastSelection.start) lastSelection = current;
+    }
+    function collapseCaret(offset){
+      var point = pointAt(Math.max(0,Math.min(offset,chars.length)));
+      var range = document.createRange();
+      range.setStart(point.node,point.offset);
+      range.collapse(true);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      editor.focus();
+    }
+
+    function render(selection){
+      editor.textContent = '';
+      var runColor = null, run = '';
+      function flush(){
+        if(!run) return;
+        var span = document.createElement('span');
+        span.setAttribute('data-q3-run',String(runColor));
+        span.style.color = colors[runColor];
+        span.textContent = run;
+        editor.appendChild(span);
+        run = '';
+      }
+      chars.forEach(function(item){
+        if(runColor !== item.color){
+          flush();
+          runColor = item.color;
+        }
+        run += item.ch;
+      });
+      flush();
+      output.textContent = '/name ' + serializeName(chars);
+      if(selection){
+        var start = Math.max(0,Math.min(selection.start,chars.length));
+        var end = Math.max(start,Math.min(selection.end,chars.length));
+        editor.focus();
+        restoreSelection(start,end);
+      }
+    }
+
+    chars = Array.prototype.map.call(editor.textContent || 'Crow',function(ch){
+      return {ch:ch,color:7};
+    });
+    render(null);
+
+    editor.addEventListener('input',function(){
+      chars = readEditor();
+      output.textContent = '/name ' + serializeName(chars);
+      saveSelection();
+    });
+    editor.addEventListener('keydown',function(e){
+      if(e.key === 'Enter') e.preventDefault();
+    });
+    editor.addEventListener('paste',function(e){
+      e.preventDefault();
+      var text = (e.clipboardData || window.clipboardData).getData('text/plain')
+        .replace(/[\r\n]+/g,' ');
+      if(document.execCommand && document.execCommand('insertText',false,text)) return;
+      var sel = window.getSelection();
+      if(!sel || !sel.rangeCount) return;
+      var range = sel.getRangeAt(0);
+      range.deleteContents();
+      var node = document.createTextNode(text);
+      range.insertNode(node);
+      range.setStartAfter(node);
+      range.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      editor.dispatchEvent(new Event('input',{bubbles:true}));
+    });
+    ['mouseup','keyup','focus'].forEach(function(type){
+      editor.addEventListener(type,saveSelection);
+    });
+    editor.addEventListener('touchend',function(){
+      setTimeout(saveSelection,0);
+    });
+
+    [].forEach.call(tool.querySelectorAll('[data-q3-color]'),function(button){
+      button.addEventListener('mousedown',function(e){
+        capturePaletteSelection();
+        e.preventDefault();
+      });
+      button.addEventListener('click',function(){
+        var digit = parseInt(button.getAttribute('data-q3-color'),10);
+        var selection = lastSelection || {start:chars.length,end:chars.length};
+        var start = Math.max(0,Math.min(selection.start,chars.length));
+        var end = Math.max(start,Math.min(selection.end,chars.length));
+        var selected = end > start;
+
+        if(!selected){
+          if(start >= chars.length) return;
+          var oldColor = chars[start].color;
+          end = start + 1;
+          while(end < chars.length && chars[end].color === oldColor) end++;
+        }
+        for(var i=start;i<end;i++) chars[i].color = digit;
+        render(null);
+        collapseCaret(selected ? end : start);
+        lastSelection = selected ? {start:start,end:end} : {start:start,end:start};
+      });
+    });
+
+    strip.addEventListener('mousedown',function(e){
+      capturePaletteSelection();
+      e.preventDefault();
+    });
+    strip.addEventListener('click',function(){
+      var caret = lastSelection ? lastSelection.end : chars.length;
+      chars.forEach(function(item){ item.color = 7; });
+      render(null);
+      collapseCaret(caret);
+      lastSelection = {start:caret,end:caret};
+    });
+
+    copy.addEventListener('click',function(){
+      output.textContent = '/name ' + serializeName(chars);
+      writeClipboard(output.textContent,function(){
+        copy.textContent = 'COPIED';
+        setTimeout(function(){copy.textContent = 'COPY'},1100);
+      });
+    });
+  }
+  function clearDetailDock(){
+    if(dock) dock.innerHTML = '';
+    if(info) info.classList.remove('has-dock');
+  }
+  function setDetail(item){
+    clearDetailDock();
+    var source = item.help && document.getElementById(item.help);
+    var body = source && source.querySelector('.bd');
+    if(body){
+      desc.innerHTML = body.innerHTML;
+      var nameTool = desc.querySelector('[data-q3-name-tool]');
+      if(nameTool && dock && info){
+        dock.appendChild(nameTool);
+        info.classList.add('has-dock');
+        initNameBuilder(dock);
+      }else{
+        initNameBuilder(desc);
+      }
+      return;
+    }
+    if(item.detail){
+      desc.innerHTML = item.detail;
+      return;
+    }
+    desc.textContent = item.desc;
+  }
+  function select(button,item,type){
+    var old = selected[type];
+    if(old && old !== button){
+      old.classList.remove('active');
+      old.setAttribute('aria-pressed','false');
+    }
+    selected[type] = button;
+    button.classList.add('active');
+    button.setAttribute('aria-pressed','true');
+    animateScreen();
+
+    var num = button.querySelector('.control-num').textContent;
+    channel.textContent = meta[type].channel + ' // ' + num;
+    var cmd = commandFor(item,type);
+    commandButton.textContent = cmd;
+    commandButton.dataset.command = cmd;
+    commandButton.hidden = false;
+    commandButton.classList.remove('copied');
+    copyState.textContent = '';
+    setDetail(item);
+
+    if(type === 'map'){
+      kind.textContent = 'ARENA · ' + item.id;
+      name.textContent = item.name;
+      loadShot(item);
+    } else if(type === 'match'){
+      kind.textContent = 'MATCH PROTOCOL · ' + item.id;
+      name.textContent = item.name;
+      showFallback(item.id.toUpperCase(),'match protocol');
+    } else if(type === 'mode'){
+      kind.textContent = 'GAMEPLAY RULESET · ' + item.id;
+      name.textContent = item.name;
+      showFallback(item.id.toUpperCase(),'weapon + movement rules');
+    } else {
+      kind.textContent = 'PLAYER GUIDE · ' + item.id;
+      name.textContent = item.name;
+      showFallback(item.id.toUpperCase(),'player reference');
+    }
+  }
+  function groupFor(item,type){
+    if(type === 'match') return 'GAMETYPE';
+    if(type === 'mode') return 'CONFIG';
+    return item.group || 'COMMAND';
+  }
+  function facetsForMap(item){
+    var id = item.id.toLowerCase();
+    var idSource = /^q3dm\d+$/.test(id) || /^q3tourney\d+(?:_ctf)?$/.test(id) || /^q3ctf[1-4]$/.test(id);
+    return {
+      type:id.indexOf('ctf') !== -1 ? 'ctf' : 'arena',
+      source:/^cpm/.test(id) ? 'cpma' : idSource ? 'id' : 'other'
+    };
+  }
+  function build(type){
+    var root = roots[type], items = sets[type];
+    items.forEach(function(item,index){
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'control-choice';
+      button.style.setProperty('--i',Math.min(index,10));
+      button.setAttribute('aria-pressed','false');
+      button._search = (item.id + ' ' + item.name).toLowerCase();
+      button._mapFacets = type === 'map' ? facetsForMap(item) : null;
+
+      var num = document.createElement('span');
+      num.className = 'control-num';
+      num.textContent = ('0' + (index + 1)).slice(-2);
+      var entry = document.createElement('span');
+      entry.className = 'control-entry';
+      var code = document.createElement('span');
+      code.className = 'control-code';
+      code.textContent = type === 'command' ? item.name : item.id;
+      var label = document.createElement('span');
+      label.className = type === 'map' ? 'control-label control-map-label' : 'control-label';
+      if(type === 'map'){
+        var title = document.createElement('span');
+        title.className = 'control-map-title';
+        title.textContent = item.name;
+        var badges = document.createElement('span');
+        badges.className = 'control-map-meta';
+        var typeBadge = document.createElement('span');
+        typeBadge.textContent = button._mapFacets.type === 'ctf' ? 'CTF' : 'FFA';
+        var sourceBadge = document.createElement('span');
+        sourceBadge.textContent = button._mapFacets.source.toUpperCase();
+        badges.appendChild(typeBadge);
+        badges.appendChild(sourceBadge);
+        label.appendChild(title);
+        label.appendChild(badges);
+      }else{
+        label.textContent = type === 'command' ? item.command : item.name;
+      }
+      entry.appendChild(code);
+      entry.appendChild(label);
+      button.appendChild(num);
+      button.appendChild(entry);
+      button._terminalItem = item;
+      button.addEventListener('click',function(){select(button,item,type)});
+      root.appendChild(button);
+    });
+  }
+  function switchTab(type){
+    shell.classList.remove('view-map','view-match','view-mode','view-command');
+    shell.classList.add('view-' + type);
+    [].forEach.call(tabs,function(tab){
+      var on = tab.getAttribute('data-terminal-tab') === type;
+      tab.classList.toggle('active',on);
+      tab.setAttribute('aria-selected',on ? 'true' : 'false');
+    });
+    [].forEach.call(panes,function(pane){
+      pane.classList.toggle('active',pane.getAttribute('data-terminal-pane') === type);
+    });
+    eyebrow.textContent = meta[type].eyebrow;
+    count.textContent = meta[type].count;
+    copyState.textContent = '';
+
+    if(type === 'map'){
+      var firstMap = applyMapFilters();
+      var button = selected.map || firstMap;
+      if(button) select(button,button._terminalItem,'map');
+    }else{
+      var button = selected[type] || roots[type].querySelector('.control-choice');
+      if(button) select(button,button._terminalItem,type);
+    }
+  }
+  function switchMain(section){
+    var server = section === 'server';
+    [].forEach.call(mainTabs,function(tab){
+      var on = tab.getAttribute('data-terminal-main') === section;
+      tab.classList.toggle('active',on);
+      tab.setAttribute('aria-selected',on ? 'true' : 'false');
+    });
+    if(subtabBar) subtabBar.hidden = !server;
+    switchTab(server ? serverType : 'command');
+  }
+  function fallbackCopy(text,done){
+    var area = document.createElement('textarea');
+    area.value = text; area.setAttribute('readonly','');
+    area.style.position = 'fixed'; area.style.opacity = '0';
+    document.body.appendChild(area); area.select();
+    try{document.execCommand('copy');done()}catch(e){}
+    document.body.removeChild(area);
+  }
+  function writeClipboard(text,done){
+    if(navigator.clipboard && window.isSecureContext){
+      navigator.clipboard.writeText(text).then(done).catch(function(){fallbackCopy(text,done)});
+    }else fallbackCopy(text,done);
+  }
+  function copyReference(card,text){
+    writeClipboard(text,function(){
+      card.classList.add('copied');
+      setTimeout(function(){card.classList.remove('copied')},1300);
+    });
+  }
+  function copyCommand(){
+    var text = commandButton.dataset.command || '';
+    if(!text) return;
+    function done(){
+      commandButton.classList.add('copied');
+      copyState.textContent = 'COPIED';
+      if(copyTimer) clearTimeout(copyTimer);
+      copyTimer = setTimeout(function(){
+        commandButton.classList.remove('copied');
+        copyState.textContent = '';
+      },1300);
+    }
+    writeClipboard(text,done);
+  }
+
+  build('map'); build('match'); build('mode'); build('command');
+  [].forEach.call(tabs,function(tab){
+    tab.addEventListener('click',function(){
+      serverType = tab.getAttribute('data-terminal-tab');
+      switchTab(serverType);
+    });
+  });
+  [].forEach.call(mainTabs,function(tab){
+    tab.addEventListener('click',function(){switchMain(tab.getAttribute('data-terminal-main'))});
+  });
+  function applyMapFilters(){
+    var q = mapFilter ? mapFilter.value.trim().toLowerCase() : '';
+    var first = null, visible = 0;
+    [].forEach.call(mapRoot.querySelectorAll('.control-choice'),function(button){
+      var typeMatch = activeMapType === 'all' || button._mapFacets.type === activeMapType;
+      var sourceMatch = activeMapSource === 'all' || button._mapFacets.source === activeMapSource;
+      var searchMatch = !q || button._search.indexOf(q) !== -1;
+      var show = typeMatch && sourceMatch && searchMatch;
+      button.hidden = !show;
+      if(show){
+        visible++;
+        if(!first) first = button;
+      }
+    });
+    if(shell.classList.contains('view-map')) count.textContent = visible + ' OF ' + maps.length;
+    if(selected.map && selected.map.hidden){
+      selected.map.classList.remove('active');
+      selected.map.setAttribute('aria-pressed','false');
+      selected.map = null;
+    }
+    if(!first && shell.classList.contains('view-map')){
+      clearDetailDock();
+      channel.textContent = 'ARENA CHANNEL // FILTER';
+      kind.textContent = 'ARENA FILTER';
+      name.textContent = 'NO MAPS FOUND';
+      desc.textContent = 'Try another type/source combination or clear the search field.';
+      commandButton.textContent = '';
+      commandButton.dataset.command = '';
+      commandButton.hidden = true;
+      showFallback('NO MATCH','adjust arena filters');
+    }
+    return first;
+  }
+  if(mapFilter){
+    mapFilter.addEventListener('input',function(){
+      var first = applyMapFilters();
+      if(first && !selected.map) select(first,first._terminalItem,'map');
+    });
+  }
+  function setFacetState(buttons,active){
+    [].forEach.call(buttons,function(other){
+      var on = other === active;
+      other.classList.toggle('active',on);
+      other.setAttribute('aria-pressed',on ? 'true' : 'false');
+    });
+  }
+  [].forEach.call(mapTypeButtons,function(button){
+    button.addEventListener('click',function(){
+      activeMapType = button.getAttribute('data-map-type') || 'all';
+      setFacetState(mapTypeButtons,button);
+      var first = applyMapFilters();
+      if(first && !selected.map) select(first,first._terminalItem,'map');
+    });
+  });
+  [].forEach.call(mapSourceButtons,function(button){
+    button.addEventListener('click',function(){
+      activeMapSource = button.getAttribute('data-map-source') || 'all';
+      setFacetState(mapSourceButtons,button);
+      var first = applyMapFilters();
+      if(first && !selected.map) select(first,first._terminalItem,'map');
+    });
+  });
+  commandButton.addEventListener('click',copyCommand);
+  switchMain('server');
 })();
 </script>
 </body>
