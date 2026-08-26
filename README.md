@@ -1,7 +1,7 @@
 # crowq3
 
 The website for a Quake III Arena server, hosted at
-**https://luci0n.github.io/crowq3/**
+**https://crow.servequake.com/**
 
 Two pages. `index.html` is the join page — what a player is given when they are
 invited. `dev.html` is a reference covering how a Quake 3 server is run and
@@ -25,9 +25,9 @@ robots.txt
 .nojekyll         serve the tree verbatim, no Jekyll processing
 ```
 
-Every path in the HTML is relative, which is what lets the site sit under the
-`/crowq3/` prefix a GitHub Pages project site is served from without any of the
-links being rewritten for it.
+Navigation and asset paths are relative, so the same files work at the custom
+domain root and under the GitHub Pages `/crowq3/` project prefix. Canonical,
+status and download URLs deliberately point at the custom domain.
 
 The join page has two live readouts. `status.json` supplies the map, mode,
 players and scores every 15 seconds. `events.json` supplies a bounded,
