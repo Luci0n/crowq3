@@ -1,0 +1,44 @@
+name: Import hosted image bb89e27ae899
+
+on:
+  push:
+    branches: [test]
+    paths:
+      - ".github/workflows/import-bb89e27ae899.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  import-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out test
+        uses: actions/checkout@v4
+        with:
+          ref: test
+
+      - name: Download and verify image
+        shell: bash
+        env:
+          SOURCE_URL: "https://uc054c8b4af52776e6e8de69457f.dl.dropboxusercontent.com/cd/0/get/DIlYYRx6L3XtA4WG2DvhksECIP3-jlp4pwF4gnW7QlDBaaTCKKTyLWuJI9Fut2wo60HJJQ4zXUCweB3bp_cG81w6ACnfe7NK4aCpAn1ah4K2KXJ3uI-eoRqIhYWZwR-nZlkKHz9uMwoSRuESruOBnqOUSxQh0-U8R0ROI2oHFa89Fw/file?c_luid=48a49248"
+          EXPECTED_SHA256: "bb89e27ae899c8ff7c9775937309af0d23e15852686c54e24212a88ef8d85b22"
+          OUT_PATH: "assets/hosted/bb89e27ae899c8ff7c9775937309af0d23e15852686c54e24212a88ef8d85b22.png"
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$OUT_PATH")"
+          curl --fail --location "$SOURCE_URL" --output "$OUT_PATH"
+          echo "$EXPECTED_SHA256  $OUT_PATH" | sha256sum --check -
+
+      - name: Commit hosted image
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "CrowBridge image host"
+          git config user.email "crowbridge-image-host@users.noreply.github.com"
+          git add "assets/hosted/bb89e27ae899c8ff7c9775937309af0d23e15852686c54e24212a88ef8d85b22.png"
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Host image bb89e27ae899"
+          git push origin HEAD:test
